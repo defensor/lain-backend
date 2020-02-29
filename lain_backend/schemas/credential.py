@@ -14,7 +14,7 @@ class CredentialCreate(CredentialBase):
 
 
 class CredentialIn(CredentialBase):
-    service_ids: List[int]
+    service_ids: Optional[List[int]] = None
 
 
 class CredentialUpdate(BaseModel):
@@ -25,7 +25,7 @@ class CredentialUpdate(BaseModel):
 
 
 class CredentialUpdateIn(CredentialUpdate):
-    service_ids: List[int] = []
+    service_ids: Optional[List[int]] = None
 
 
 class Credential(BaseModel):

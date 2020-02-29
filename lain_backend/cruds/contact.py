@@ -10,12 +10,21 @@ from lain_backend.schemas import (
     ContactUpdate,
     ContactUpdateIn,
 )
+from lain_backend.cruds import organizations_contacts, peoples_contacts
 
 
 async def create(db: Database, contact: ContactIn) -> Optional[Mapping[Any, Any]]:
     contact_create = ContactCreate(**contact.dict())
 
     contact_id = await db.execute(model.insert().values(**contact_create.dict()))
+
+    if contact.organization_ids is not None:
+        for oid in contact.organization_ids:
+            await organizations_contacts.create(db=db, organization_id=oid, contact_id=contact_id)
+
+    if contact.people_ids is not None:
+        for pid in contact.people_ids:
+            await peoples_contacts.create(db=db, people_id=pid, contact_id=contact_id)
 
     return await get(db=db, contact_id=contact_id)
 
@@ -24,9 +33,7 @@ async def get(db: Database, contact_id: int) -> Optional[Mapping[Any, Any]]:
     return await db.fetch_one(model.select().where(model.c.id == contact_id))
 
 
-async def get_all(
-    db: Database, skip: int = 0, limit: int = 100
-) -> List[Mapping[Any, Any]]:
+async def get_all(db: Database, skip: int = 0, limit: int = 100) -> List[Mapping[Any, Any]]:
     return await db.fetch_all(model.select().offset(skip).limit(limit))
 
 
@@ -46,6 +53,14 @@ async def update(
         .values({**contact_update.dict(exclude_none=True)})
         .where(model.c.id == contact_id)
     )
+
+    if contact.organization_ids is not None:
+        await organizations_contacts.update(
+            db=db, organization_ids=contact.organization_ids, contact_id=contact_id
+        )
+
+    if contact.people_ids is not None:
+        await peoples_contacts.update(db=db, people_ids=contact.people_ids, contact_id=contact_id)
 
     return await get(db=db, contact_id=contact_id)
 

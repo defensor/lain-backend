@@ -13,7 +13,7 @@ class BuildingCreate(BuildingBase):
 
 
 class BuildingIn(BuildingBase):
-    organization_ids: List[int]
+    organization_ids: Optional[List[int]] = None
 
 
 class BuildingUpdate(BaseModel):
@@ -23,7 +23,7 @@ class BuildingUpdate(BaseModel):
 
 
 class BuildingUpdateIn(BuildingUpdate):
-    organization_ids: List[int] = []
+    organization_ids: Optional[List[int]] = None
 
 
 class Building(BaseModel):

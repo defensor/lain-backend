@@ -15,7 +15,7 @@ class PeopleCreate(PeopleBase):
 
 
 class PeopleIn(PeopleBase):
-    organization_ids: List[int]
+    organization_ids: Optional[List[int]] = None
 
 
 class PeopleUpdate(BaseModel):
@@ -27,7 +27,7 @@ class PeopleUpdate(BaseModel):
 
 
 class PeopleUpdateIn(PeopleUpdate):
-    organization_ids: List[int] = []
+    organization_ids: Optional[List[int]] = None
 
 
 class People(BaseModel):

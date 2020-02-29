@@ -13,8 +13,8 @@ class ContactCreate(ContactBase):
 
 
 class ContactIn(ContactBase):
-    organization_ids: List[int]
-    people_ids: List[int]
+    organization_ids: Optional[List[int]] = None
+    people_ids: Optional[List[int]] = None
 
 
 class ContactUpdate(BaseModel):
@@ -24,8 +24,8 @@ class ContactUpdate(BaseModel):
 
 
 class ContactUpdateIn(ContactUpdate):
-    organization_ids: List[int] = []
-    people_ids: List[int] = []
+    organization_ids: Optional[List[int]] = None
+    people_ids: Optional[List[int]] = None
 
 
 class Contact(BaseModel):

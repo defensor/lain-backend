@@ -2,6 +2,7 @@ __all__ = ["create", "get", "get_all", "update", "delete", "check", "exists"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
+from sqlalchemy import and_, not_
 
 from lain_backend.models import Building as model
 from lain_backend.schemas import (
@@ -10,12 +11,19 @@ from lain_backend.schemas import (
     BuildingUpdate,
     BuildingUpdateIn,
 )
+from lain_backend.cruds import organizations_buildings
 
 
 async def create(db: Database, building: BuildingIn) -> Optional[Mapping[Any, Any]]:
     building_create = BuildingCreate(**building.dict())
 
     building_id = await db.execute(model.insert().values(**building_create.dict()))
+
+    if building.organization_ids is not None:
+        for oid in building.organization_ids:
+            await organizations_buildings.create(
+                db=db, building_id=building_id, organization_id=oid
+            )
 
     return await get(db=db, building_id=building_id)
 
@@ -24,9 +32,7 @@ async def get(db: Database, building_id: int) -> Optional[Mapping[Any, Any]]:
     return await db.fetch_one(model.select().where(model.c.id == building_id))
 
 
-async def get_all(
-    db: Database, skip: int = 0, limit: int = 100
-) -> List[Mapping[Any, Any]]:
+async def get_all(db: Database, skip: int = 0, limit: int = 100) -> List[Mapping[Any, Any]]:
     return await db.fetch_all(model.select().offset(skip).limit(limit))
 
 
@@ -46,6 +52,11 @@ async def update(
         .values({**building_update.dict(exclude_none=True)})
         .where(model.c.id == building_id)
     )
+
+    if building.organization_ids is not None:
+        await organizations_buildings.update(
+            db=db, organization_ids=building.organization_ids, building_id=building_id
+        )
 
     return await get(db=db, building_id=building_id)
 

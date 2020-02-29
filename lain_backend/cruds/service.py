@@ -10,6 +10,7 @@ from lain_backend.schemas import (
     ServiceUpdate,
     ServiceUpdateIn,
 )
+from lain_backend.cruds import services_protocols
 
 
 async def create(db: Database, service: ServiceIn) -> Optional[Mapping[Any, Any]]:
@@ -24,9 +25,7 @@ async def get(db: Database, service_id: int) -> Optional[Mapping[Any, Any]]:
     return await db.fetch_one(model.select().where(model.c.id == service_id))
 
 
-async def get_all(
-    db: Database, skip: int = 0, limit: int = 100
-) -> List[Mapping[Any, Any]]:
+async def get_all(db: Database, skip: int = 0, limit: int = 100) -> List[Mapping[Any, Any]]:
     return await db.fetch_all(model.select().offset(skip).limit(limit))
 
 

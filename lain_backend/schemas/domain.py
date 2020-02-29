@@ -13,7 +13,7 @@ class DomainCreate(DomainBase):
 
 
 class DomainIn(DomainBase):
-    host_ids: List[int]
+    host_ids: Optional[List[int]] = None
 
 
 class DomainUpdate(BaseModel):
@@ -23,7 +23,7 @@ class DomainUpdate(BaseModel):
 
 
 class DomainUpdateIn(DomainUpdate):
-    host_ids: List[int] = []
+    host_ids: Optional[List[int]] = None
 
 
 class Domain(BaseModel):

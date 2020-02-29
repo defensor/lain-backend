@@ -14,7 +14,7 @@ class ServiceCreate(ServiceBase):
 
 
 class ServiceIn(ServiceBase):
-    protocol_ids: List[int]
+    protocol_ids: Optional[List[int]] = None
 
 
 class ServiceUpdate(BaseModel):
@@ -25,7 +25,7 @@ class ServiceUpdate(BaseModel):
 
 
 class ServiceUpdateIn(ServiceUpdate):
-    protocol_ids: List[int] = []
+    protocol_ids: Optional[List[int]] = None
 
 
 class Service(BaseModel):

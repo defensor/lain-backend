@@ -16,7 +16,7 @@ class NetworkCreate(NetworkBase):
 
 
 class NetworkIn(NetworkBase):
-    organization_ids: List[int]
+    organization_ids: Optional[List[int]] = None
 
 
 class NetworkUpdate(BaseModel):
@@ -29,7 +29,7 @@ class NetworkUpdate(BaseModel):
 
 
 class NetworkUpdateIn(NetworkUpdate):
-    organization_ids: List[int] = []
+    organization_ids: Optional[List[int]] = None
 
 
 class Network(BaseModel):
