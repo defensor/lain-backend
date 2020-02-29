@@ -1,0 +1,30 @@
+version: "3.4"
+
+services:
+  flyway-migrate: &flyway
+    build:
+      context: .
+      dockerfile: compose/migrations/Dockerfile
+    command: -url=jdbc:postgresql://db/lain_db -user=lain_user -password=P@ssw0rd -connectRetries=60 migrate
+    depends_on:
+      - db
+
+  flyway-clean:
+    <<: *flyway
+    command: -url=jdbc:postgresql://db/lain_db -user=lain_user -password=P@ssw0rd -connectRetries=60 clean
+
+  db:
+    image: "postgres:12.1-alpine"
+    environment:
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_USER: lain_user
+      POSTGRES_DB: lain_db
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
