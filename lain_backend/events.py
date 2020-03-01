@@ -1,4 +1,4 @@
-from ps_backend.database import database
+from lain_backend.database import database
 
 
 async def startup():

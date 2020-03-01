@@ -50,8 +50,5 @@ async def update(
 
 
 async def check(db: Database, service_id: int) -> bool:
-    return await db.execute(model.exists().where(model.c.id == service_id))
+    return (await get(db=db, service_id=service_id)) is not None
 
-
-async def exists(db: Database, name: str) -> bool:
-    return await db.execute(model.exists().where(model.c.name == name))

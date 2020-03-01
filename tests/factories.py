@@ -162,6 +162,7 @@ class ServiceFactory(BaseFactory):
     port = Sequence(lambda i: i)
     version = Sequence(lambda i: f"Version {i}")
     description = Sequence(lambda i: f"Description {i}")
+    host_id = SubFactory(HostFactory)
 
     class Meta:
         model = ServiceIn
@@ -288,3 +289,14 @@ class VulnerabilityFactoryWithServices(VulnerabilityFactory):
     class Meta:
         model = VulnerabilityIn
         crud_create = vulnerability.create
+
+
+class CredentialFactory(BaseFactory):
+    login = Sequence(lambda i: f"login {i}")
+    password = Sequence(lambda i: f"password {i}")
+    key = Sequence(lambda i: f"key {i}")
+    description = Sequence(lambda i: f"Description {i}")
+
+    class Meta:
+        model = CredentialIn
+        crud_create = credential.create

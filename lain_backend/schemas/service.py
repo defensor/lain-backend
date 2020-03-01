@@ -7,6 +7,7 @@ class ServiceBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=64)
     version: Optional[str] = Field(None, max_length=64)
     description: Optional[str] = None
+    host_id: int
 
 
 class ServiceCreate(ServiceBase):
@@ -22,6 +23,7 @@ class ServiceUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=64)
     version: Optional[str] = Field(None, max_length=64)
     description: Optional[str] = None
+    host_id: Optional[int] = None
 
 
 class ServiceUpdateIn(ServiceUpdate):

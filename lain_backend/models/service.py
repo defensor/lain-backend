@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Text
+from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey
 
 from lain_backend.database import metadata
 
@@ -10,4 +10,5 @@ Service = Table(
     Column("name", String(64)),
     Column("version", String(64), nullable=True),
     Column("description", Text, nullable=True),
+    Column("host_id", Integer, ForeignKey("hosts.id", ondelete="CASCADE")),
 )

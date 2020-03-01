@@ -24,9 +24,7 @@ async def get(db: Database, protocol_id: int) -> Optional[Mapping[Any, Any]]:
     return await db.fetch_one(model.select().where(model.c.id == protocol_id))
 
 
-async def get_all(
-    db: Database, skip: int = 0, limit: int = 100
-) -> List[Mapping[Any, Any]]:
+async def get_all(db: Database, skip: int = 0, limit: int = 100) -> List[Mapping[Any, Any]]:
     return await db.fetch_all(model.select().offset(skip).limit(limit))
 
 
@@ -51,8 +49,8 @@ async def update(
 
 
 async def check(db: Database, protocol_id: int) -> bool:
-    return await db.execute(model.exists().where(model.c.id == protocol_id))
+    return (await get(db=db, protocol_id=protocol_id)) is not None
 
 
 async def exists(db: Database, name: str) -> bool:
-    return await db.execute(model.exists().where(model.c.name == name))
+    return (await db.fetch_one(model.select().where(model.c.name == name))) is not None
