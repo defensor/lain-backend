@@ -28,5 +28,19 @@ class ContactUpdateIn(ContactUpdate):
     people_ids: Optional[List[int]] = None
 
 
-class Contact(BaseModel):
+class Contact(ContactBase):
     id: int
+
+
+class ContactInnerFilter(BaseModel):
+    value: Optional[str] = Field(None, min_length=4, max_length=32)
+    type_id: Optional[int] = None
+
+
+class ContactOuterFilter(BaseModel):
+    organization_id: Optional[int] = None
+    people_id: Optional[int] = None
+
+
+class ContactFilter(ContactInnerFilter, ContactOuterFilter):
+    pass

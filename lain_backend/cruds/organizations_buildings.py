@@ -2,7 +2,7 @@ __all__ = ["create", "update", "get"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
-from sqlalchemy import and_, not_
+from sqlalchemy import and_
 
 from lain_backend.models import organizations_buildings as model
 
@@ -20,17 +20,19 @@ async def update(db: Database, organization_ids: List[int], building_id: int) ->
         model.delete().where(
             and_(
                 model.c.building_id == building_id,
-                not_(model.c.organization_id.in_(organization_ids)),
+                model.c.organization_id.notin_(organization_ids),
             )
         )
     )
 
     for oid in organization_ids:
-        if not await db.execute(
-            model.exists().where(
-                and_(model.c.building_id == building_id, model.c.organization_id == oid,)
+        if (
+            await db.fetch_one(
+                model.select().where(
+                    and_(model.c.building_id == building_id, model.c.organization_id == oid,)
+                )
             )
-        ):
+        ) is None:
             await db.execute(model.insert().values(building_id=building_id, organization_id=oid))
 
     return

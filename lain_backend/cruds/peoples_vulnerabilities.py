@@ -2,7 +2,7 @@ __all__ = ["create", "update", "get"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
-from sqlalchemy import and_, not_
+from sqlalchemy import and_
 
 from lain_backend.models import peoples_vulnerabilities as model
 
@@ -16,21 +16,20 @@ async def create(db: Database, people_id: int, vulnerability_id: int) -> None:
 async def update(db: Database, people_ids: List[int], vulnerability_id: int) -> None:
     await db.execute(
         model.delete().where(
-            and_(
-                model.c.vulnerability_id == vulnerability_id,
-                not_(model.c.people_id.in_(people_ids)),
-            )
+            and_(model.c.vulnerability_id == vulnerability_id, model.c.people_id.notin_(people_ids))
         )
     )
 
-    for oid in people_ids:
-        if not await db.execute(
-            model.exists().where(
-                and_(model.c.vulnerability_id == vulnerability_id, model.c.people_id == oid,)
+    for pid in people_ids:
+        if (
+            await db.fetch_one(
+                model.select().where(
+                    and_(model.c.vulnerability_id == vulnerability_id, model.c.people_id == pid)
+                )
             )
-        ):
+        ) is None:
             await db.execute(
-                model.insert().values(vulnerability_id=vulnerability_id, people_id=oid)
+                model.insert().values(vulnerability_id=vulnerability_id, people_id=pid)
             )
 
     return

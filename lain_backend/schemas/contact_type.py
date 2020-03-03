@@ -22,5 +22,17 @@ class ContactTypeUpdateIn(ContactTypeUpdate):
     pass
 
 
-class ContactType(BaseModel):
+class ContactType(ContactTypeBase):
     id: int
+
+
+class ContactTypeInnerFilter(BaseModel):
+    name: Optional[str] = Field(None, min_length=2, max_length=32)
+
+
+class ContactTypeOuterFilter(BaseModel):
+    pass
+
+
+class ContactTypeFilter(ContactTypeInnerFilter, ContactTypeOuterFilter):
+    pass

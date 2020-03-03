@@ -2,7 +2,7 @@ __all__ = ["create", "update", "get"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
-from sqlalchemy import and_, not_
+from sqlalchemy import and_
 
 from lain_backend.models import services_credentials as model
 
@@ -16,17 +16,19 @@ async def create(db: Database, service_id: int, credential_id: int) -> None:
 async def update(db: Database, service_ids: List[int], credential_id: int) -> None:
     await db.execute(
         model.delete().where(
-            and_(model.c.credential_id == credential_id, not_(model.c.service_id.in_(service_ids)),)
+            and_(model.c.credential_id == credential_id, model.c.service_id.notin_(service_ids))
         )
     )
 
-    for oid in service_ids:
-        if not await db.execute(
-            model.exists().where(
-                and_(model.c.credential_id == credential_id, model.c.service_id == oid,)
+    for sid in service_ids:
+        if (
+            await db.fetch_one(
+                model.select().where(
+                    and_(model.c.credential_id == credential_id, model.c.service_id == sid)
+                )
             )
-        ):
-            await db.execute(model.insert().values(credential_id=credential_id, service_id=oid))
+        ) is None:
+            await db.execute(model.insert().values(credential_id=credential_id, service_id=sid))
 
     return
 

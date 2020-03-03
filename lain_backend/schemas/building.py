@@ -26,5 +26,18 @@ class BuildingUpdateIn(BuildingUpdate):
     organization_ids: Optional[List[int]] = None
 
 
-class Building(BaseModel):
+class Building(BuildingBase):
     id: int
+
+
+class BuildingInnerFilter(BaseModel):
+    addr: Optional[str] = Field(None, min_length=3, max_length=64)
+    name: Optional[str] = Field(None, min_length=2, max_length=32)
+
+
+class BuildingOuterFilter(BaseModel):
+    organization_id: Optional[int] = None
+
+
+class BuildingFilter(BuildingInnerFilter, BuildingOuterFilter):
+    pass

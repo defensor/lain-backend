@@ -26,5 +26,18 @@ class DomainUpdateIn(DomainUpdate):
     host_ids: Optional[List[int]] = None
 
 
-class Domain(BaseModel):
+class Domain(DomainBase):
     id: int
+
+
+class DomainInnerFilter(BaseModel):
+    name: Optional[str] = Field(None, min_length=3, max_length=64)
+    type_id: Optional[int] = None
+
+
+class DomainOuterFilter(BaseModel):
+    host_id: Optional[int] = None
+
+
+class DomainFilter(DomainInnerFilter, DomainOuterFilter):
+    pass

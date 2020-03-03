@@ -30,5 +30,22 @@ class ServiceUpdateIn(ServiceUpdate):
     protocol_ids: Optional[List[int]] = None
 
 
-class Service(BaseModel):
+class Service(ServiceBase):
     id: int
+
+
+class ServiceInnerFilter(BaseModel):
+    port: Optional[int] = Field(None, ge=0, le=65535)
+    name: Optional[str] = Field(None, min_length=3, max_length=64)
+    version: Optional[str] = Field(None, max_length=64)
+    host_id: Optional[int] = None
+
+
+class ServiceOuterFilter(BaseModel):
+    protocol_id: Optional[int] = None
+    vulnerability_id: Optional[int] = None
+    credential_id: Optional[int] = None
+
+
+class ServiceFilter(ServiceInnerFilter, ServiceOuterFilter):
+    pass

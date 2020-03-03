@@ -2,7 +2,7 @@ __all__ = ["create", "update", "get"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
-from sqlalchemy import and_, not_
+from sqlalchemy import and_
 
 from lain_backend.models import services_protocols as model
 
@@ -16,16 +16,18 @@ async def create(db: Database, service_id: int, protocol_id: int) -> None:
 async def update(db: Database, protocol_ids: List[int], service_id: int) -> None:
     await db.execute(
         model.delete().where(
-            and_(model.c.service_id == service_id, not_(model.c.protocol_id.in_(protocol_ids)),)
+            and_(model.c.service_id == service_id, model.c.protocol_id.notin_(protocol_ids))
         )
     )
 
     for pid in protocol_ids:
-        if not await db.execute(
-            model.exists().where(
-                and_(model.c.service_id == service_id, model.c.protocol_id == pid,)
+        if (
+            await db.fetch_one(
+                model.select().where(
+                    and_(model.c.service_id == service_id, model.c.protocol_id == pid)
+                )
             )
-        ):
+        ) is None:
             await db.execute(model.insert().values(service_id=service_id, protocol_id=pid))
 
     return

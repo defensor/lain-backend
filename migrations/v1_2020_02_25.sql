@@ -1,6 +1,6 @@
 CREATE TABLE projects(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(128) NOT NULL UNIQUE,
+    name VARCHAR(128) NOT NULL UNIQUE
 );
 
 CREATE TABLE organizations(
@@ -29,9 +29,14 @@ CREATE TABLE hosts(
     id SERIAL PRIMARY KEY,
     addr VARCHAR(15) NOT NULL,
     os VARCHAR(32),
-    description TEXT
+    description TEXT,
 
     network_id INTEGER NOT NULL REFERENCES networks (id) ON DELETE CASCADE
+);
+
+CREATE TABLE domain_types(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(8) NOT NULL UNIQUE
 );
 
 CREATE TABLE domains(
@@ -47,12 +52,9 @@ CREATE TABLE services(
     port INTEGER NOT NULL,
     name VARCHAR(64) NOT NULL,
     version VARCHAR(64),
-    description TEXT
-);
+    description TEXT,
 
-CREATE TABLE domain_types(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(8) NOT NULL UNIQUE
+    host_id INTEGER REFERENCES hosts (id) ON DELETE CASCADE
 );
 
 CREATE TABLE protocols(
@@ -77,11 +79,16 @@ CREATE TABLE vulnerabilities(
 
 CREATE TABLE peoples(
     id SERIAL PRIMARY KEY,
-    firtsname VARCHAR(16),
+    firstname VARCHAR(16),
     surname VARCHAR(16),
     patronymic VARCHAR(16),
     position VARCHAR(32),
     description TEXT
+);
+
+CREATE TABLE contact_types(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(32) NOT NULL UNIQUE
 );
 
 CREATE TABLE contacts(
@@ -90,11 +97,6 @@ CREATE TABLE contacts(
     description TEXT,
 
     type_id INTEGER REFERENCES contact_types (id) ON DELETE SET NULL
-);
-
-CREATE TABLE contact_types(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(32) NOT NULL UNIQUE
 );
 
 CREATE TABLE organizations_networks(
@@ -108,7 +110,7 @@ CREATE TABLE organizations_buildings(
 );
 
 CREATE TABLE hosts_domains(
-    host_id INTEGER NOT NULL REFERENCES hosts (id) ON DELETE CASCADE
+    host_id INTEGER NOT NULL REFERENCES hosts (id) ON DELETE CASCADE,
     domain_id INTEGER NOT NULL REFERENCES domains (id) ON DELETE CASCADE
 );
 
@@ -118,17 +120,17 @@ CREATE TABLE organizations_peoples(
 );
 
 CREATE TABLE peoples_vulnerabilities(
-    people_id INTEGER NOT NULL REFERENCES peoples (id) ON DELETE CASCADE
+    people_id INTEGER NOT NULL REFERENCES peoples (id) ON DELETE CASCADE,
     vulnerability_id INTEGER NOT NULL REFERENCES vulnerabilities (id) ON DELETE CASCADE
 );
 
 CREATE TABLE networks_vulnerabilities(
-    network_id INTEGER NOT NULL REFERENCES networks (id) ON DELETE CASCADE
+    network_id INTEGER NOT NULL REFERENCES networks (id) ON DELETE CASCADE,
     vulnerability_id INTEGER NOT NULL REFERENCES vulnerabilities (id) ON DELETE CASCADE
 );
 
 CREATE TABLE hosts_vulnerabilities(
-    host_id INTEGER NOT NULL REFERENCES hosts (id) ON DELETE CASCADE
+    host_id INTEGER NOT NULL REFERENCES hosts (id) ON DELETE CASCADE,
     vulnerability_id INTEGER NOT NULL REFERENCES vulnerabilities (id) ON DELETE CASCADE
 );
 
@@ -138,7 +140,7 @@ CREATE TABLE organizations_contacts(
 );
 
 CREATE TABLE peoples_contacts(
-    people_id INTEGER NOT NULL REFERENCES peoples (id) ON DELETE CASCADE
+    people_id INTEGER NOT NULL REFERENCES peoples (id) ON DELETE CASCADE,
     contact_id INTEGER NOT NULL REFERENCES contacts (id) ON DELETE CASCADE
 );
 

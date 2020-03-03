@@ -22,5 +22,17 @@ class DomainTypeUpdateIn(DomainTypeUpdate):
     pass
 
 
-class DomainType(BaseModel):
+class DomainType(DomainTypeBase):
     id: int
+
+
+class DomainTypeInnerFilter(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=8)
+
+
+class DomainTypeOuterFilter(BaseModel):
+    pass
+
+
+class DomainTypeFilter(DomainTypeInnerFilter, DomainTypeOuterFilter):
+    pass

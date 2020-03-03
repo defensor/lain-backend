@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from lain_backend import __version__, config
 from lain_backend.events import startup, shutdown
 
-# from lain_backend.blueprints import api
+from lain_backend.blueprints import api
 
 
 def create_app() -> FastAPI:
@@ -18,8 +18,7 @@ def create_app() -> FastAPI:
 
 
 def register_routes(app: FastAPI):
-    #    app.include_router(api.router, prefix="/api")
-    pass
+    app.include_router(api.router, prefix="/api")
 
 
 def register_middlewares(app: FastAPI):

@@ -34,7 +34,7 @@ from .credential import Credential
 from .domain import Domain
 from .domain_type import DomainType
 from .host import Host
-from .networks import Network
+from .network import Network
 from .organization import Organization
 from .people import People
 from .project import Project
