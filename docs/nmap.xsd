@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  nmap.dtd
+  This is the DTD for Nmap's XML output (-oX) format.
+  $Id$
+  
+  Originally written by:
+  William McVey <wam@cisco.com> <wam+nmap@wamber.net>
+  
+  Now maintained by Fyodor <fyodor@insecure.org> as part of Nmap.     
+  
+  To validate using this file, simply add a DOCTYPE line similar to:
+  <!DOCTYPE nmaprun SYSTEM "nmap.dtd">
+  to the nmap output immediately below the prologue (the first line).  This
+  should allow you to run a validating parser against the output (so long
+  as the DTD is in your parser's DTD search path).
+  
+  Bugs:
+  Most of the elements are "locked" into the specific order that nmap
+  generates, when there really is no need for a specific ordering.
+  This is primarily because I don't know the xml DTD construct to
+  specify "one each of this list of elements, in any order".  If there
+  is a construct similar to SGML's '&' operator, please let me know.
+  
+  Portions Copyright (c) 2001-2008 Insecure.Com LLC
+  Portions Copyright (c) 2001 by Cisco systems, Inc.
+  
+  Permission to use, copy, modify, and distribute modified and
+  unmodified copies of this software for any purpose and without fee is
+  hereby granted, provided that (a) this copyright and permission notice
+  appear on all copies of the software and supporting documentation, (b)
+  the name of Cisco Systems, Inc. not be used in advertising or
+  publicity pertaining to distribution of the program without specific
+  prior permission, and (c) notice be given in supporting documentation
+  that use, modification, copying and distribution is by permission of
+  Cisco Systems, Inc.
+  
+  Cisco Systems, Inc. makes no representations about the suitability
+  of this software for any purpose.  THIS SOFTWARE IS PROVIDED ``AS
+  IS'' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+  WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+  FITNESS FOR A PARTICULAR PURPOSE.
+-->
+<!-- parameter entities to specify common "types" used elsewhere in the DTD -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:simpleType name="attr_numeric">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:simpleType name="attr_ipaddr">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:simpleType name="attr_percent">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:simpleType name="attr_type">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="ipv4"/>
+      <xs:enumeration value="ipv6"/>
+      <xs:enumeration value="mac"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="host_states">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="up"/>
+      <xs:enumeration value="down"/>
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="skipped"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- see: nmap.c:statenum2str for list of port states -->
+  <!-- Maybe they should be enumerated as in scan_types below , but I -->
+  <!-- don't know how to escape states like open|filtered -->
+  <xs:simpleType name="port_states">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:simpleType name="hostname_types">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="user"/>
+      <xs:enumeration value="PTR"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- see output.c:output_xml_scaninfo_records for scan types -->
+  <xs:simpleType name="scan_types">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="syn"/>
+      <xs:enumeration value="ack"/>
+      <xs:enumeration value="bounce"/>
+      <xs:enumeration value="connect"/>
+      <xs:enumeration value="null"/>
+      <xs:enumeration value="xmas"/>
+      <xs:enumeration value="window"/>
+      <xs:enumeration value="maimon"/>
+      <xs:enumeration value="fin"/>
+      <xs:enumeration value="udp"/>
+      <xs:enumeration value="sctpinit"/>
+      <xs:enumeration value="sctpcookieecho"/>
+      <xs:enumeration value="ipproto"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- <!ENTITY % ip_versions "(ipv4)" > -->
+  <xs:simpleType name="port_protocols">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="ip"/>
+      <xs:enumeration value="tcp"/>
+      <xs:enumeration value="udp"/>
+      <xs:enumeration value="sctp"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- Service detection confidence level (portlist.h:struct serviceDeductions) -->
+  <xs:simpleType name="service_confs">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="0"/>
+      <xs:enumeration value="1"/>
+      <xs:enumeration value="2"/>
+      <xs:enumeration value="3"/>
+      <xs:enumeration value="4"/>
+      <xs:enumeration value="5"/>
+      <xs:enumeration value="6"/>
+      <xs:enumeration value="7"/>
+      <xs:enumeration value="8"/>
+      <xs:enumeration value="9"/>
+      <xs:enumeration value="10"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--
+    This element was started in nmap.c:nmap_main().
+    It represents to the topmost element of the output document.
+  -->
+  <xs:element name="nmaprun">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="scaninfo"/>
+        <xs:element ref="verbose"/>
+        <xs:element ref="debugging"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="target"/>
+          <xs:element ref="taskbegin"/>
+          <xs:element ref="taskprogress"/>
+          <xs:element ref="taskend"/>
+          <xs:element ref="hosthint"/>
+          <xs:element ref="prescript"/>
+          <xs:element ref="postscript"/>
+          <xs:element ref="host"/>
+          <xs:element ref="output"/>
+        </xs:choice>
+        <xs:element ref="runstats"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_nmaprun"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_nmaprun">
+    <xs:attribute name="scanner" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="nmap"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="args"/>
+    <xs:attribute name="start" type="attr_numeric"/>
+    <xs:attribute name="startstr"/>
+    <xs:attribute name="version" use="required"/>
+    <xs:attribute name="profile_name"/>
+    <xs:attribute name="xmloutputversion" use="required"/>
+  </xs:attributeGroup>
+  <!-- this element is written in output.c:doscaninfo() -->
+  <xs:element name="scaninfo">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_scaninfo"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_scaninfo">
+    <xs:attribute name="type" use="required" type="scan_types"/>
+    <xs:attribute name="scanflags"/>
+    <xs:attribute name="protocol" use="required" type="port_protocols"/>
+    <xs:attribute name="numservices" use="required" type="attr_numeric"/>
+    <xs:attribute name="services" use="required"/>
+  </xs:attributeGroup>
+  <!-- these elements are written in nmap.c:nmap_main() -->
+  <xs:element name="verbose">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_verbose"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_verbose">
+    <xs:attribute name="level" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="debugging">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_debugging"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_debugging">
+    <xs:attribute name="level" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="target">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_target"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_target">
+    <xs:attribute name="specification" use="required"/>
+    <xs:attribute name="status">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="skipped"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="reason">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="invalid"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- this element is written in timing.c:beginOrEndTask() -->
+  <xs:element name="taskbegin">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_taskbegin"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_taskbegin">
+    <xs:attribute name="task" use="required"/>
+    <xs:attribute name="time" use="required" type="attr_numeric"/>
+    <xs:attribute name="extrainfo"/>
+  </xs:attributeGroup>
+  <!-- this element is written in timing.c:printStats() -->
+  <xs:element name="taskprogress">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_taskprogress"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_taskprogress">
+    <xs:attribute name="task" use="required"/>
+    <xs:attribute name="time" use="required" type="attr_numeric"/>
+    <xs:attribute name="percent" use="required" type="attr_percent"/>
+    <xs:attribute name="remaining" use="required" type="attr_numeric"/>
+    <xs:attribute name="etc" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <!-- this element is written in timing.c:beginOrEndTask() -->
+  <xs:element name="taskend">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_taskend"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_taskend">
+    <xs:attribute name="task" use="required"/>
+    <xs:attribute name="time" use="required" type="attr_numeric"/>
+    <xs:attribute name="extrainfo"/>
+  </xs:attributeGroup>
+  <!--
+    this element is started in nmap.c:nmap_main() and filled by
+    output.c:write_host_status(), output.c:printportoutput(), and
+    output.c:printosscanoutput()
+  -->
+  <xs:element name="host">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="status"/>
+        <xs:element ref="address"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="address"/>
+          <xs:element ref="hostnames"/>
+          <xs:element ref="smurf"/>
+          <xs:element ref="ports"/>
+          <xs:element ref="os"/>
+          <xs:element ref="distance"/>
+          <xs:element ref="uptime"/>
+          <xs:element ref="tcpsequence"/>
+          <xs:element ref="ipidsequence"/>
+          <xs:element ref="tcptssequence"/>
+          <xs:element ref="hostscript"/>
+          <xs:element ref="trace"/>
+        </xs:choice>
+        <xs:element minOccurs="0" ref="times"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_host"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_host">
+    <xs:attribute name="starttime" type="attr_numeric"/>
+    <xs:attribute name="endtime" type="attr_numeric"/>
+    <xs:attribute name="comment"/>
+  </xs:attributeGroup>
+  <!-- these elements are written by scan_engine.c:ultrascan_host_pspec_update() -->
+  <xs:element name="hosthint">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="status"/>
+        <xs:element ref="address"/>
+        <xs:element ref="hostnames"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <!-- these elements are written by output.c:write_xml_initial_hostinfo() -->
+  <xs:element name="status">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_status"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_status">
+    <xs:attribute name="state" use="required" type="host_states"/>
+    <xs:attribute name="reason" use="required"/>
+    <xs:attribute name="reason_ttl" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="address">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_address"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_address">
+    <xs:attribute name="addr" use="required" type="attr_ipaddr"/>
+    <xs:attribute name="addrtype" default="ipv4" type="attr_type"/>
+    <xs:attribute name="vendor"/>
+  </xs:attributeGroup>
+  <xs:element name="hostnames">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="hostname"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="hostname">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_hostname"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_hostname">
+    <xs:attribute name="name"/>
+    <xs:attribute name="type" type="hostname_types"/>
+  </xs:attributeGroup>
+  <!-- this element is written by output.c:write_host_status() -->
+  <xs:element name="smurf">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_smurf"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_smurf">
+    <xs:attribute name="responses" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <!-- these elements are written by output.c:printportoutput() -->
+  <xs:element name="ports">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="extraports"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="port"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="extraports">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="extrareasons"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_extraports"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_extraports">
+    <xs:attribute name="state" use="required" type="port_states"/>
+    <xs:attribute name="count" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="extrareasons">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_extrareasons"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_extrareasons">
+    <xs:attribute name="reason" use="required"/>
+    <xs:attribute name="count" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="port">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="state"/>
+        <xs:element minOccurs="0" ref="owner"/>
+        <xs:element minOccurs="0" ref="service"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="script"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_port"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_port">
+    <xs:attribute name="protocol" use="required" type="port_protocols"/>
+    <xs:attribute name="portid" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="state">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_state"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_state">
+    <xs:attribute name="state" use="required" type="port_states"/>
+    <xs:attribute name="reason" use="required"/>
+    <xs:attribute name="reason_ttl" use="required"/>
+    <xs:attribute name="reason_ip"/>
+  </xs:attributeGroup>
+  <xs:element name="owner">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_owner"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_owner">
+    <xs:attribute name="name" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="service">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="cpe"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_service"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_service">
+    <xs:attribute name="name" use="required"/>
+    <xs:attribute name="conf" use="required" type="service_confs"/>
+    <xs:attribute name="method" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="table"/>
+          <xs:enumeration value="probed"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="version"/>
+    <xs:attribute name="product"/>
+    <xs:attribute name="extrainfo"/>
+    <xs:attribute name="tunnel">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="ssl"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="proto">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="rpc"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="rpcnum" type="attr_numeric"/>
+    <xs:attribute name="lowver" type="attr_numeric"/>
+    <xs:attribute name="highver" type="attr_numeric"/>
+    <xs:attribute name="hostname"/>
+    <xs:attribute name="ostype"/>
+    <xs:attribute name="devicetype"/>
+    <xs:attribute name="servicefp"/>
+  </xs:attributeGroup>
+  <xs:element name="cpe" type="xs:string"/>
+  <xs:element name="script">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="table"/>
+        <xs:element ref="elem"/>
+      </xs:choice>
+      <xs:attributeGroup ref="attlist_script"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_script">
+    <xs:attribute name="id" use="required"/>
+    <xs:attribute name="output" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="table">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="table"/>
+        <xs:element ref="elem"/>
+      </xs:choice>
+      <xs:attributeGroup ref="attlist_table"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_table">
+    <xs:attribute name="key"/>
+  </xs:attributeGroup>
+  <xs:element name="elem">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="attlist_elem"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_elem">
+    <xs:attribute name="key"/>
+  </xs:attributeGroup>
+  <xs:element name="os">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="portused"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="osmatch"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="osfingerprint"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="portused">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_portused"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_portused">
+    <xs:attribute name="state" use="required" type="port_states"/>
+    <xs:attribute name="proto" use="required" type="port_protocols"/>
+    <xs:attribute name="portid" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="osclass">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="cpe"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_osclass"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_osclass">
+    <xs:attribute name="vendor" use="required"/>
+    <xs:attribute name="osgen"/>
+    <xs:attribute name="type"/>
+    <xs:attribute name="accuracy" use="required"/>
+    <xs:attribute name="osfamily" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="osmatch">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="osclass"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_osmatch"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_osmatch">
+    <xs:attribute name="name" use="required"/>
+    <xs:attribute name="accuracy" use="required" type="attr_numeric"/>
+    <xs:attribute name="line" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="osfingerprint">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_osfingerprint"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_osfingerprint">
+    <xs:attribute name="fingerprint" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="distance">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_distance"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_distance">
+    <xs:attribute name="value" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="uptime">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_uptime"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_uptime">
+    <xs:attribute name="seconds" use="required" type="attr_numeric"/>
+    <xs:attribute name="lastboot"/>
+  </xs:attributeGroup>
+  <xs:element name="tcpsequence">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_tcpsequence"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_tcpsequence">
+    <xs:attribute name="index" use="required" type="attr_numeric"/>
+    <xs:attribute name="difficulty" use="required"/>
+    <xs:attribute name="values" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="ipidsequence">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_ipidsequence"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_ipidsequence">
+    <xs:attribute name="class" use="required"/>
+    <xs:attribute name="values" use="required"/>
+  </xs:attributeGroup>
+  <xs:element name="tcptssequence">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_tcptssequence"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_tcptssequence">
+    <xs:attribute name="class" use="required"/>
+    <xs:attribute name="values"/>
+  </xs:attributeGroup>
+  <xs:element name="trace">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="hop"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="attlist_trace"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_trace">
+    <xs:attribute name="proto"/>
+    <xs:attribute name="port"/>
+  </xs:attributeGroup>
+  <xs:element name="hop">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_hop"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_hop">
+    <xs:attribute name="ttl" use="required"/>
+    <xs:attribute name="rtt"/>
+    <xs:attribute name="ipaddr"/>
+    <xs:attribute name="host"/>
+  </xs:attributeGroup>
+  <xs:element name="times">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_times"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_times">
+    <xs:attribute name="srtt" use="required"/>
+    <xs:attribute name="rttvar" use="required"/>
+    <xs:attribute name="to" use="required"/>
+  </xs:attributeGroup>
+  <!-- For embedding another type of output (screen output) like Zenmap does. -->
+  <xs:element name="output">
+    <xs:complexType mixed="true">
+      <xs:attributeGroup ref="attlist_output"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_output">
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="interactive"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- these elements are generated in output.c:printfinaloutput() -->
+  <xs:element name="runstats">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="finished"/>
+        <xs:element ref="hosts"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="finished">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_finished"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_finished">
+    <xs:attribute name="time" use="required" type="attr_numeric"/>
+    <xs:attribute name="timestr"/>
+    <xs:attribute name="elapsed" use="required" type="attr_numeric"/>
+    <xs:attribute name="summary"/>
+    <xs:attribute name="exit">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="error"/>
+          <xs:enumeration value="success"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="errormsg"/>
+  </xs:attributeGroup>
+  <xs:element name="hosts">
+    <xs:complexType>
+      <xs:attributeGroup ref="attlist_hosts"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist_hosts">
+    <xs:attribute name="up" default="0" type="attr_numeric"/>
+    <xs:attribute name="down" default="0" type="attr_numeric"/>
+    <xs:attribute name="total" use="required" type="attr_numeric"/>
+  </xs:attributeGroup>
+  <xs:element name="hostscript">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="script"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="prescript">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="script"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="postscript">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="script"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
