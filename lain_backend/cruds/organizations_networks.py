@@ -1,4 +1,4 @@
-__all__ = ["create", "update", "get_all"]
+__all__ = ["create", "delete", "get_all", "exist"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
@@ -8,39 +8,44 @@ from lain_backend.models import organizations_networks as model
 
 
 async def create(db: Database, organization_id: int, network_id: int) -> None:
-    await db.execute(model.insert().values(network_id=network_id, organization_id=organization_id))
+    await db.execute(
+        model.insert().values(network_id=network_id, organization_id=organization_id)
+    )
 
-    return
 
-
-async def update(db: Database, organization_ids: List[int], network_id: int) -> None:
+async def delete(db: Database, organization_id: int, network_id: int) -> None:
     await db.execute(
         model.delete().where(
-            and_(
-                model.c.network_id == network_id, model.c.organization_id.notin_(organization_ids),
-            )
+            and_(network_id == network_id, organization_id == organization_id)
         )
     )
 
-    for oid in organization_ids:
-        if (
-            await db.fetch_one(
-                model.select().where(
-                    and_(model.c.network_id == network_id, model.c.organization_id == oid,)
-                )
-            )
-        ) is None:
-            await db.execute(model.insert().values(network_id=network_id, organization_id=oid))
-
-    return
-
 
 async def get_all(
-    db: Database, network_id: Optional[int] = None, organization_id: Optional[int] = None
+    db: Database,
+    network_id: Optional[int] = None,
+    organization_id: Optional[int] = None,
 ) -> List[Mapping[Any, Any]]:
     if network_id is not None:
-        return await db.fetch_all(model.select().where(model.c.network_id == network_id))
+        return await db.fetch_all(
+            model.select().where(model.c.network_id == network_id)
+        )
     elif organization_id is not None:
-        return await db.fetch_all(model.select().where(model.c.organization_id == organization_id))
+        return await db.fetch_all(
+            model.select().where(model.c.organization_id == organization_id)
+        )
     else:
         return await db.fetch_all(model.select().where())
+
+
+async def exist(db: Database, network_id: int, organization_id: int) -> bool:
+    return (
+        db.fetch_one(
+            model.select().where(
+                and_(
+                    model.c.network_id == network_id,
+                    model.c.organization_id == organization_id,
+                )
+            )
+        )
+    ) is not None

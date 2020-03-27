@@ -1,4 +1,4 @@
-__all__ = ["create", "update", "get"]
+__all__ = ["create", "delete", "get_all", "exist"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database
@@ -10,25 +10,13 @@ from lain_backend.models import hosts_domains as model
 async def create(db: Database, host_id: int, domain_id: int) -> None:
     await db.execute(model.insert().values(domain_id=domain_id, host_id=host_id))
 
-    return
 
-
-async def update(db: Database, host_ids: List[int], domain_id: int) -> None:
+async def delete(db: Database, host_id: int, domain_id: int) -> None:
     await db.execute(
         model.delete().where(
-            and_(model.c.domain_id == domain_id, model.c.host_id.notin_(host_ids),)
+            and_(model.c.domain_id == domain_id, model.c.host_id == host_id)
         )
     )
-
-    for hid in host_ids:
-        if (
-            await db.fetch_one(
-                model.select().where(and_(model.c.domain_id == domain_id, model.c.host_id == hid,))
-            )
-        ) is None:
-            await db.execute(model.insert().values(domain_id=domain_id, host_id=hid))
-
-    return
 
 
 async def get_all(
@@ -40,3 +28,13 @@ async def get_all(
         return await db.fetch_all(model.select().where(model.c.host_id == host_id))
     else:
         return await db.fetch_all(model.select().where())
+
+
+async def exist(db: Database, domain_id: int, host_id: int) -> bool:
+    return (
+        db.fetch_one(
+            model.select().where(
+                and_(model.c.domain_id == domain_id, model.c.host_id == host_id)
+            )
+        )
+    ) is not None
