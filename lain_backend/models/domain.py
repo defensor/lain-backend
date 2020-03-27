@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, ForeignKey
 
 from lain_backend.database import metadata
 
@@ -7,7 +7,7 @@ Domain = Table(
     metadata,
     Column("id", Integer, primary_key=True, index=True),
     Column("name", String(64), unique=True),
-    Column("description", Text, nullable=True),
+    Column("description", String(512), nullable=True),
     Column(
         "type_id",
         Integer,

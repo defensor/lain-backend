@@ -4,7 +4,7 @@ from typing import Optional
 
 class OrganizationBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=64)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=512)
     project_id: int
 
 
@@ -18,8 +18,7 @@ class OrganizationIn(OrganizationBase):
 
 class OrganizationUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=64)
-    description: Optional[str] = None
-    project_id: Optional[int] = None
+    description: Optional[str] = Field(None, max_length=512)
 
 
 class OrganizationUpdateIn(OrganizationUpdate):
@@ -37,9 +36,6 @@ class OrganizationInnerFilter(BaseModel):
 
 class OrganizationOuterFilter(BaseModel):
     network_id: Optional[int] = None
-    people_id: Optional[int] = None
-    building_id: Optional[int] = None
-    contact_id: Optional[int] = None
 
 
 class OrganizationFilter(OrganizationInnerFilter, OrganizationOuterFilter):

@@ -1,14 +1,11 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, IPvAnyAddress
 from typing import Optional
 
 
 class HostBase(BaseModel):
-    addr: str = Field(
-        ...,
-        regex="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
-    )
+    addr: IPvAnyAddress
     os: Optional[str] = Field(None, min_length=2, max_length=32)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=512)
     network_id: int
 
 
@@ -21,13 +18,9 @@ class HostIn(HostBase):
 
 
 class HostUpdate(BaseModel):
-    addr: Optional[str] = Field(
-        None,
-        regex="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
-    )
+    addr: Optional[IPvAnyAddress] = None
     os: Optional[str] = Field(None, min_length=2, max_length=32)
-    description: Optional[str] = None
-    network_id: Optional[int] = None
+    description: Optional[str] = Field(None, max_length=512)
 
 
 class HostUpdateIn(HostUpdate):
@@ -39,17 +32,13 @@ class Host(HostBase):
 
 
 class HostInnerFilter(BaseModel):
-    addr: Optional[str] = Field(
-        None,
-        regex="^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
-    )
+    addr: Optional[IPvAnyAddress] = None
     os: Optional[str] = Field(None, min_length=2, max_length=32)
     network_id: Optional[int] = None
 
 
 class HostOuterFilter(BaseModel):
     domain_id: Optional[int] = None
-    vulnerability_id: Optional[int] = None
 
 
 class HostFilter(HostInnerFilter, HostOuterFilter):

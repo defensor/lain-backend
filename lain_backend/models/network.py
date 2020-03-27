@@ -1,4 +1,5 @@
-from sqlalchemy import Table, Column, Integer, String, Text
+from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy_utils import IPAddressType
 
 from lain_backend.database import metadata
 
@@ -6,7 +7,7 @@ Network = Table(
     "networks",
     metadata,
     Column("id", Integer, primary_key=True, index=True),
-    Column("addr", String(18)),
+    Column("addr", IPAddressType),
     Column("name", String(32)),
-    Column("description", Text, nullable=True),
+    Column("description", String(512), nullable=True),
 )

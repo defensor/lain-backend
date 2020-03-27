@@ -1,4 +1,4 @@
-__all__ = ["create", "update", "get"]
+__all__ = ["create", "update", "get_all"]
 
 from typing import List, Optional, Mapping, Any
 from databases import Database

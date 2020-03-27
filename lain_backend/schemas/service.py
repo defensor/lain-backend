@@ -1,12 +1,12 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional
 
 
 class ServiceBase(BaseModel):
     port: int = Field(..., ge=0, le=65535)
     name: str = Field(..., min_length=3, max_length=64)
     version: Optional[str] = Field(None, max_length=64)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=512)
     host_id: int
 
 
@@ -15,19 +15,19 @@ class ServiceCreate(ServiceBase):
 
 
 class ServiceIn(ServiceBase):
-    protocol_ids: Optional[List[int]] = None
+    pass
 
 
 class ServiceUpdate(BaseModel):
     port: Optional[int] = Field(None, ge=0, le=65535)
     name: Optional[str] = Field(None, min_length=3, max_length=64)
     version: Optional[str] = Field(None, max_length=64)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=512)
     host_id: Optional[int] = None
 
 
 class ServiceUpdateIn(ServiceUpdate):
-    protocol_ids: Optional[List[int]] = None
+    pass
 
 
 class Service(ServiceBase):
@@ -43,8 +43,6 @@ class ServiceInnerFilter(BaseModel):
 
 class ServiceOuterFilter(BaseModel):
     protocol_id: Optional[int] = None
-    vulnerability_id: Optional[int] = None
-    credential_id: Optional[int] = None
 
 
 class ServiceFilter(ServiceInnerFilter, ServiceOuterFilter):
