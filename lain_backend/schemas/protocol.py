@@ -24,15 +24,3 @@ class ProtocolUpdateIn(ProtocolUpdate):
 
 class Protocol(ProtocolBase):
     id: int
-
-
-class ProtocolInnerFilter(BaseModel):
-    name: Optional[str] = Field(None, min_length=3, max_length=32)
-
-
-class ProtocolOuterFilter(BaseModel):
-    service_id: Optional[int] = None
-
-
-class ProtocolFilter(ProtocolInnerFilter, ProtocolOuterFilter):
-    pass

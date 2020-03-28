@@ -4,13 +4,14 @@ from typing import List, Optional
 
 from fastapi import HTTPException
 
-from lain_backend.cruds import project as crud
+from lain_backend.cruds import project as crud, organization
 from lain_backend.schemas import (
     Project,
     ProjectCreate,
     ProjectIn,
     ProjectUpdate,
     ProjectUpdateIn,
+    Organization,
 )
 from lain_backend.database import database as db
 
@@ -62,3 +63,11 @@ async def project_update(project_id: int, project: ProjectUpdateIn):
     return await crud.update(
         db=db, project_id=project_id, project=ProjectUpdate(**project.dict())
     )
+
+
+@router.get("/{project_id}/organizations", response_model=List[Organization])
+async def project_get_organizations(project_id):
+    if not (await crud.exist(db=db, project_id=project_id)):
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return await organization.get_all(db=db, project_id=project_id)

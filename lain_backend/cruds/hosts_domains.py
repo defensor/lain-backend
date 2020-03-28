@@ -1,10 +1,11 @@
 __all__ = ["create", "delete", "get_all", "exist"]
 
-from typing import List, Optional, Mapping, Any
+from typing import List, Optional
 from databases import Database
 from sqlalchemy import and_
 
 from lain_backend.models import hosts_domains as model
+from lain_backend.schemas import HostDomain
 
 
 async def create(db: Database, host_id: int, domain_id: int) -> None:
@@ -21,13 +22,20 @@ async def delete(db: Database, host_id: int, domain_id: int) -> None:
 
 async def get_all(
     db: Database, domain_id: Optional[int] = None, host_id: Optional[int] = None
-) -> List[Mapping[Any, Any]]:
+) -> List[HostDomain]:
     if domain_id is not None:
-        return await db.fetch_all(model.select().where(model.c.domain_id == domain_id))
+        hosts_domains = await db.fetch_all(
+            model.select().where(model.c.domain_id == domain_id)
+        )
     elif host_id is not None:
-        return await db.fetch_all(model.select().where(model.c.host_id == host_id))
+        hosts_domains = await db.fetch_all(
+            model.select().where(model.c.host_id == host_id)
+        )
     else:
-        return await db.fetch_all(model.select().where())
+        hosts_domains = await db.fetch_all(model.select().where())
+
+    return [HostDomain(**host_domain) for host_domain in hosts_domains]
+
 
 
 async def exist(db: Database, domain_id: int, host_id: int) -> bool:

@@ -4,9 +4,6 @@ from .domain import (
     DomainIn,
     DomainUpdate,
     DomainUpdateIn,
-    DomainInnerFilter,
-    DomainOuterFilter,
-    DomainFilter,
 )
 from .domain_type import (
     DomainType,
@@ -14,9 +11,6 @@ from .domain_type import (
     DomainTypeIn,
     DomainTypeUpdate,
     DomainTypeUpdateIn,
-    DomainTypeInnerFilter,
-    DomainTypeOuterFilter,
-    DomainTypeFilter,
 )
 from .host import (
     Host,
@@ -24,9 +18,6 @@ from .host import (
     HostIn,
     HostUpdate,
     HostUpdateIn,
-    HostInnerFilter,
-    HostOuterFilter,
-    HostFilter,
 )
 from .networks import (
     Network,
@@ -34,9 +25,6 @@ from .networks import (
     NetworkIn,
     NetworkUpdate,
     NetworkUpdateIn,
-    NetworkInnerFilter,
-    NetworkOuterFilter,
-    NetworkFilter,
 )
 from .organization import (
     Organization,
@@ -44,9 +32,6 @@ from .organization import (
     OrganizationIn,
     OrganizationUpdate,
     OrganizationUpdateIn,
-    OrganizationInnerFilter,
-    OrganizationOuterFilter,
-    OrganizationFilter,
 )
 from .project import (
     Project,
@@ -54,9 +39,6 @@ from .project import (
     ProjectIn,
     ProjectUpdate,
     ProjectUpdateIn,
-    ProjectInnerFilter,
-    ProjectOuterFilter,
-    ProjectFilter,
 )
 from .protocol import (
     Protocol,
@@ -64,9 +46,6 @@ from .protocol import (
     ProtocolIn,
     ProtocolUpdate,
     ProtocolUpdateIn,
-    ProtocolInnerFilter,
-    ProtocolOuterFilter,
-    ProtocolFilter,
 )
 from .service import (
     Service,
@@ -74,7 +53,7 @@ from .service import (
     ServiceIn,
     ServiceUpdate,
     ServiceUpdateIn,
-    ServiceInnerFilter,
-    ServiceOuterFilter,
-    ServiceFilter,
 )
+from .hosts_domains import HostDomain
+from .organizations_networks import OrganizationNetwork
+from .services_protocols import ServiceProtocol

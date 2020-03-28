@@ -1,10 +1,11 @@
 __all__ = ["create", "delete", "get_all", "exist"]
 
-from typing import List, Optional, Mapping, Any
+from typing import List, Optional
 from databases import Database
 from sqlalchemy import and_
 
 from lain_backend.models import services_protocols as model
+from lain_backend.schemas import ServiceProtocol
 
 
 async def create(db: Database, service_id: int, protocol_id: int) -> None:
@@ -23,17 +24,21 @@ async def delete(db: Database, service_id: int, protocol_id: int) -> None:
 
 async def get_all(
     db: Database, protocol_id: Optional[int] = None, service_id: Optional[int] = None
-) -> List[Mapping[Any, Any]]:
+) -> List[ServiceProtocol]:
     if protocol_id is not None:
-        return await db.fetch_all(
+        services_protocols = await db.fetch_all(
             model.select().where(model.c.protocol_id == protocol_id)
         )
     elif service_id is not None:
-        return await db.fetch_all(
+        services_protocols = await db.fetch_all(
             model.select().where(model.c.service_id == service_id)
         )
     else:
-        return await db.fetch_all(model.select().where())
+        services_protocols = await db.fetch_all(model.select().where())
+
+    return [
+        ServiceProtocol(**service_protocol) for service_protocol in services_protocols
+    ]
 
 
 async def exist(db: Database, protocol_id: int, service_id: int) -> bool:

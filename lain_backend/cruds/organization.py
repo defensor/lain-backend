@@ -30,8 +30,18 @@ async def get(db: Database, organization_id: int) -> Optional[Organization]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Organization]:
-    organizations = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, project_id: Optional[int] = None
+) -> List[Organization]:
+    if project_id is None:
+        organizations = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        organizations = await db.fetch_all(
+            model.select()
+            .where(model.c.project_id == project_id)
+            .offset(skip)
+            .limit(limit)
+        )
 
     return [Organization(**organization) for organization in organizations]
 

@@ -27,16 +27,3 @@ class OrganizationUpdateIn(OrganizationUpdate):
 
 class Organization(OrganizationBase):
     id: int
-
-
-class OrganizationInnerFilter(BaseModel):
-    name: Optional[str] = Field(None, min_length=3, max_length=64)
-    project_id: Optional[int] = None
-
-
-class OrganizationOuterFilter(BaseModel):
-    network_id: Optional[int] = None
-
-
-class OrganizationFilter(OrganizationInnerFilter, OrganizationOuterFilter):
-    pass

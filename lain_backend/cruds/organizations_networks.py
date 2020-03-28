@@ -1,10 +1,11 @@
 __all__ = ["create", "delete", "get_all", "exist"]
 
-from typing import List, Optional, Mapping, Any
+from typing import List, Optional
 from databases import Database
 from sqlalchemy import and_
 
 from lain_backend.models import organizations_networks as model
+from lain_backend.schemas import OrganizationNetwork
 
 
 async def create(db: Database, organization_id: int, network_id: int) -> None:
@@ -25,17 +26,22 @@ async def get_all(
     db: Database,
     network_id: Optional[int] = None,
     organization_id: Optional[int] = None,
-) -> List[Mapping[Any, Any]]:
+) -> List[OrganizationNetwork]:
     if network_id is not None:
-        return await db.fetch_all(
+        organizations_networks = await db.fetch_all(
             model.select().where(model.c.network_id == network_id)
         )
     elif organization_id is not None:
-        return await db.fetch_all(
+        organizations_networks = await db.fetch_all(
             model.select().where(model.c.organization_id == organization_id)
         )
     else:
-        return await db.fetch_all(model.select().where())
+        organizations_networks = await db.fetch_all(model.select().where())
+
+    return [
+        OrganizationNetwork(**organization_network)
+        for organization_network in organizations_networks
+    ]
 
 
 async def exist(db: Database, network_id: int, organization_id: int) -> bool:

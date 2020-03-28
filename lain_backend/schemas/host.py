@@ -29,17 +29,3 @@ class HostUpdateIn(HostUpdate):
 
 class Host(HostBase):
     id: int
-
-
-class HostInnerFilter(BaseModel):
-    addr: Optional[IPvAnyAddress] = None
-    os: Optional[str] = Field(None, min_length=2, max_length=32)
-    network_id: Optional[int] = None
-
-
-class HostOuterFilter(BaseModel):
-    domain_id: Optional[int] = None
-
-
-class HostFilter(HostInnerFilter, HostOuterFilter):
-    pass

@@ -24,15 +24,3 @@ class ProjectUpdateIn(ProjectUpdate):
 
 class Project(ProjectBase):
     id: int
-
-
-class ProjectInnerFilter(BaseModel):
-    name: Optional[str] = Field(None, min_length=3, max_length=128)
-
-
-class ProjectOuterFilter(BaseModel):
-    pass
-
-
-class ProjectFilter(ProjectInnerFilter, ProjectOuterFilter):
-    pass

@@ -25,7 +25,7 @@ async def get(db: Database, domain_type_id: int) -> Optional[DomainType]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[DomainType]:
+async def get_all(db: Database, skip: int = 0, limit: int = 100) -> List[DomainType]:
     domain_types = await db.fetch_all(model.select().offset(skip).limit(limit))
 
     return [DomainType(**domain_type) for domain_type in domain_types]

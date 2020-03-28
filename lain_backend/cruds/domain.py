@@ -27,8 +27,19 @@ async def get(db: Database, domain_id: int) -> Optional[Domain]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Domain]:
-    domains = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, host_id: Optional[int] = None
+) -> List[Domain]:
+    if host_id is None:
+        domains = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        ids = [
+            host_domain.domain_id
+            for host_domain in await hosts_domains.get_all(db=db, host_id=host_id)
+        ]
+        domains = await db.fetch_all(
+            model.select().where(model.c.id.in_(ids)).offset(skip).limit(limit)
+        )
 
     return [Domain(**domain) for domain in domains]
 

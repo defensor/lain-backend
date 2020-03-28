@@ -27,8 +27,21 @@ async def get(db: Database, network_id: int) -> Optional[Network]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Network]:
-    networks = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, organization_id: Optional[int] = None
+) -> List[Network]:
+    if organization_id is None:
+        networks = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        ids = [
+            organization_network.network_id
+            for organization_network in await organizations_networks.get_all(
+                db=db, organization_id=organization_id
+            )
+        ]
+        networks = await db.fetch_all(
+            model.select().where(model.c.id.in_(ids)).offset(skip).limit(limit)
+        )
 
     return [Network(**network) for network in networks]
 

@@ -10,6 +10,8 @@ from lain_backend.schemas import (
     ProtocolUpdate,
 )
 
+from lain_backend.cruds import services_protocols
+
 
 async def create(db: Database, protocol: ProtocolCreate) -> Optional[Protocol]:
     protocol_id = await db.execute(model.insert().values(**protocol.dict()))
@@ -26,8 +28,21 @@ async def get(db: Database, protocol_id: int) -> Optional[Protocol]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Protocol]:
-    protocols = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, service_id: Optional[int] = None
+) -> List[Protocol]:
+    if service_id is None:
+        protocols = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        ids = [
+            service_protocol.protocol_id
+            for service_protocol in await services_protocols.get_all(
+                db=db, service_id=service_id
+            )
+        ]
+        protocols = await db.fetch_all(
+            model.select().where(model.c.id.in_(ids).offset(skip).limit(limit))
+        )
 
     return [Protocol(**protocol) for protocol in protocols]
 

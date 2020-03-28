@@ -27,8 +27,15 @@ async def get(db: Database, service_id: int) -> Optional[Service]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Service]:
-    services = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, host_id: Optional[int] = None
+) -> List[Service]:
+    if host_id is None:
+        services = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        services = await db.fetch_all(
+            model.select.where(model.c.host_id == host_id).offset(skip).limit(limit)
+        )
 
     return [Service(**service) for service in services]
 

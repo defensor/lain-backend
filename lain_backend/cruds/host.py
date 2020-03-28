@@ -26,8 +26,18 @@ async def get(db: Database, host_id: int) -> Optional[Host]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Host]:
-    hosts = await db.fetch_all(model.select().offset(skip).limit(limit))
+async def get_all(
+    db: Database, skip: int = 0, limit: int = 100, network_id: Optional[int] = None
+) -> List[Host]:
+    if network_id is None:
+        hosts = await db.fetch_all(model.select().offset(skip).limit(limit))
+    else:
+        hosts = await db.fetch_all(
+            model.select()
+            .where(model.c.network_id == network_id)
+            .offset(skip)
+            .limit(limit)
+        )
 
     return [Host(**host) for host in hosts]
 

@@ -4,13 +4,14 @@ from typing import List, Optional
 
 from fastapi import HTTPException
 
-from lain_backend.cruds import network as crud
+from lain_backend.cruds import network as crud, host
 from lain_backend.schemas import (
     Network,
     NetworkCreate,
     NetworkIn,
     NetworkUpdate,
     NetworkUpdateIn,
+    Host,
 )
 from lain_backend.database import database as db
 
@@ -51,3 +52,11 @@ async def network_update(network_id: int, network: NetworkUpdateIn):
     return await crud.update(
         db=db, network_id=network_id, network=NetworkUpdate(**network.dict())
     )
+
+
+@router.get("/{network_id}/hosts", response_model=List[Host])
+async def network_get_hosts(network_id):
+    if not (await crud.exist(db=db, network_id=network_id)):
+        raise HTTPException(status_code=404, detail="Network not found")
+
+    return await host.get_all(db=db, network_id=network_id)
