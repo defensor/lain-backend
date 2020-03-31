@@ -7,7 +7,7 @@ __all__ = [
     "Project",
     "Protocol",
     "Service",
-    "organizations_networks",
+    "organizations_hosts",
     "services_protocols",
     "hosts_domains",
 ]
@@ -15,12 +15,11 @@ __all__ = [
 from .domain import Domain
 from .domain_type import DomainType
 from .host import Host
-from .network import Network
 from .organization import Organization
 from .project import Project
 from .protocol import Protocol
 from .service import Service
 
-from .organizations_networks import organizations_networks
+from .organizations_hosts import organizations_hosts
 from .services_protocols import services_protocols
 from .hosts_domains import hosts_domains

@@ -10,5 +10,4 @@ Host = Table(
     Column("addr", IPAddressType),
     Column("os", String(32), nullable=True),
     Column("description", String(512), nullable=True),
-    Column("network_id", Integer, ForeignKey("networks.id", ondelete="CASCADE")),
 )

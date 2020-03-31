@@ -45,7 +45,7 @@ from lain_backend.schemas import ServiceUpdateIn
 async def test_factory(db, input, expected):
     service = await ServiceFactory(**input)
     for key in expected:
-        assert service[key] == expected[key]
+        assert service.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -76,7 +76,7 @@ async def test_get_all(db):
 
     for i in range(2):
         for key in dict(db_services[i]):
-            assert db_services[i][key] == services[i][key]
+            assert db_services[i].dict()[key] == services[i].dict()[key]
 
 
 @pytest.mark.asyncio
@@ -89,15 +89,15 @@ async def test_create(db):
 async def test_get_one(db):
     service = await ServiceFactory()
 
-    db_service = await crud.get(db, service["id"])
+    db_service = await crud.get(db, service.id)
 
     for key in dict(service):
-        assert db_service[key] == service[key]
+        assert db_service.dict()[key] == service.dict()[key]
 
 
 @pytest.mark.asyncio
 async def test_delete(db):
-    service_id = (await ServiceFactory())["id"]
+    service_id = (await ServiceFactory()).id
 
     assert (await crud.delete(db, service_id)) is None
 
@@ -129,12 +129,14 @@ async def test_delete(db):
     ],
 )
 async def test_update(db, input, updateData, expected):
-    service_id = (await ServiceFactory(**input))["id"]
+    service_id = (await ServiceFactory(**input)).id
 
-    service = await crud.update(db=db, service_id=service_id, service=ServiceUpdateIn(**updateData))
+    service = await crud.update(
+        db=db, service_id=service_id, service=ServiceUpdateIn(**updateData)
+    )
 
     for key in expected:
-        assert service[key] == expected[key]
+        assert service.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -145,7 +147,7 @@ async def test_get_unknown(db):
 
 
 @pytest.mark.asyncio
-async def test_check(db):
+async def test_exist(db):
     service = await ServiceFactory()
 
-    assert await crud.check(db=db, service_id=service["id"])
+    assert await crud.exist(db=db, service_id=service.id)

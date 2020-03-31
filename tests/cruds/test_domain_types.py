@@ -16,7 +16,7 @@ from lain_backend.schemas import DomainTypeUpdateIn
 async def test_factory(db, input, expected):
     domain_type = await DomainTypeFactory(**input)
     for key in expected:
-        assert domain_type[key] == expected[key]
+        assert domain_type.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -40,7 +40,7 @@ async def test_get_all(db):
 
     for i in range(2):
         for key in dict(db_domain_types[i]):
-            assert db_domain_types[i][key] == domain_types[i][key]
+            assert db_domain_types[i].dict()[key] == domain_types[i].dict()[key]
 
 
 @pytest.mark.asyncio
@@ -61,15 +61,15 @@ async def test_unique_create(db):
 async def test_get_one(db):
     domain_type = await DomainTypeFactory()
 
-    db_domain_type = await crud.get(db, domain_type["id"])
+    db_domain_type = await crud.get(db, domain_type.id)
 
     for key in dict(domain_type):
-        assert db_domain_type[key] == domain_type[key]
+        assert db_domain_type.dict()[key] == domain_type.dict()[key]
 
 
 @pytest.mark.asyncio
 async def test_delete(db):
-    domain_type_id = (await DomainTypeFactory())["id"]
+    domain_type_id = (await DomainTypeFactory()).id
 
     assert (await crud.delete(db, domain_type_id)) is None
 
@@ -80,14 +80,16 @@ async def test_delete(db):
     [({"name": "One dt"}, {"name": "Another"}, {"name": "Another"},)],
 )
 async def test_update(db, input, updateData, expected):
-    domain_type_id = (await DomainTypeFactory(**input))["id"]
+    domain_type_id = (await DomainTypeFactory(**input)).id
 
     domain_type = await crud.update(
-        db=db, domain_type_id=domain_type_id, domain_type=DomainTypeUpdateIn(**updateData)
+        db=db,
+        domain_type_id=domain_type_id,
+        domain_type=DomainTypeUpdateIn(**updateData),
     )
 
     for key in expected:
-        assert domain_type[key] == expected[key]
+        assert domain_type.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -98,14 +100,14 @@ async def test_get_unknown(db):
 
 
 @pytest.mark.asyncio
-async def test_exists(db):
+async def test_exist_name(db):
     domain_type = await DomainTypeFactory()
 
-    assert await crud.exists(db=db, name=domain_type["name"])
+    assert await crud.exist_name(db=db, name=domain_type.name)
 
 
 @pytest.mark.asyncio
-async def test_check(db):
+async def test_exist(db):
     domain_type = await DomainTypeFactory()
 
-    assert await crud.check(db=db, domain_type_id=domain_type["id"])
+    assert await crud.exist(db=db, domain_type_id=domain_type.id)

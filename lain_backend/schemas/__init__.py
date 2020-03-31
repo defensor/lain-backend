@@ -19,13 +19,6 @@ from .host import (
     HostUpdate,
     HostUpdateIn,
 )
-from .networks import (
-    Network,
-    NetworkCreate,
-    NetworkIn,
-    NetworkUpdate,
-    NetworkUpdateIn,
-)
 from .organization import (
     Organization,
     OrganizationCreate,
@@ -55,5 +48,5 @@ from .service import (
     ServiceUpdateIn,
 )
 from .hosts_domains import HostDomain
-from .organizations_networks import OrganizationNetwork
+from .organizations_hosts import OrganizationHost
 from .services_protocols import ServiceProtocol

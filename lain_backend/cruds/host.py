@@ -27,14 +27,14 @@ async def get(db: Database, host_id: int) -> Optional[Host]:
 
 
 async def get_all(
-    db: Database, skip: int = 0, limit: int = 100, network_id: Optional[int] = None
+    db: Database, skip: int = 0, limit: int = 100, organization_id: Optional[int] = None
 ) -> List[Host]:
-    if network_id is None:
+    if organization_id is None:
         hosts = await db.fetch_all(model.select().offset(skip).limit(limit))
     else:
         hosts = await db.fetch_all(
             model.select()
-            .where(model.c.network_id == network_id)
+            .where(model.c.organization_id == organization_id)
             .offset(skip)
             .limit(limit)
         )

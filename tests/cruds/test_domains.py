@@ -19,7 +19,7 @@ from lain_backend.schemas import DomainUpdateIn
 async def test_factory(db, input, expected):
     domain = await DomainFactory(**input)
     for key in expected:
-        assert domain[key] == expected[key]
+        assert domain.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -43,7 +43,7 @@ async def test_get_all(db):
 
     for i in range(2):
         for key in dict(db_domains[i]):
-            assert db_domains[i][key] == domains[i][key]
+            assert db_domains[i].dict()[key] == domains[i].dict()[key]
 
 
 @pytest.mark.asyncio
@@ -64,15 +64,15 @@ async def test_unique_create(db):
 async def test_get_one(db):
     domain = await DomainFactory()
 
-    db_domain = await crud.get(db, domain["id"])
+    db_domain = await crud.get(db, domain.id)
 
     for key in dict(domain):
-        assert db_domain[key] == domain[key]
+        assert db_domain.dict()[key] == domain.dict()[key]
 
 
 @pytest.mark.asyncio
 async def test_delete(db):
-    domain_id = (await DomainFactory())["id"]
+    domain_id = (await DomainFactory()).id
 
     assert (await crud.delete(db, domain_id)) is None
 
@@ -89,12 +89,14 @@ async def test_delete(db):
     ],
 )
 async def test_update(db, input, updateData, expected):
-    domain_id = (await DomainFactory(**input))["id"]
+    domain_id = (await DomainFactory(**input)).id
 
-    domain = await crud.update(db=db, domain_id=domain_id, domain=DomainUpdateIn(**updateData))
+    domain = await crud.update(
+        db=db, domain_id=domain_id, domain=DomainUpdateIn(**updateData)
+    )
 
     for key in expected:
-        assert domain[key] == expected[key]
+        assert domain.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -105,14 +107,14 @@ async def test_get_unknown(db):
 
 
 @pytest.mark.asyncio
-async def test_exists(db):
+async def test_exist_name(db):
     domain = await DomainFactory()
 
-    assert await crud.exists(db=db, name=domain["name"])
+    assert await crud.exist_name(db=db, name=domain.name)
 
 
 @pytest.mark.asyncio
-async def test_check(db):
+async def test_exist(db):
     domain = await DomainFactory()
 
-    assert await crud.check(db=db, domain_id=domain["id"])
+    assert await crud.exist(db=db, domain_id=domain.id)

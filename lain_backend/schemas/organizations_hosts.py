@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
 
-class OrganizationNetwork(BaseModel):
+class OrganizationHost(BaseModel):
     organization_id: int
-    network_id: int
+    host_id: int

@@ -25,7 +25,7 @@ from lain_backend.schemas import OrganizationUpdateIn
 async def test_factory(db, input, expected):
     organization = await OrganizationFactory(**input)
     for key in expected:
-        assert organization[key] == expected[key]
+        assert organization.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -49,7 +49,7 @@ async def test_get_all(db):
 
     for i in range(2):
         for key in dict(db_organizations[i]):
-            assert db_organizations[i][key] == organizations[i][key]
+            assert db_organizations[i].dict()[key] == organizations[i].dict()[key]
 
 
 @pytest.mark.asyncio
@@ -70,15 +70,15 @@ async def test_unique_create(db):
 async def test_get_one(db):
     organization = await OrganizationFactory()
 
-    db_organization = await crud.get(db, organization["id"])
+    db_organization = await crud.get(db, organization.id)
 
     for key in dict(organization):
-        assert db_organization[key] == organization[key]
+        assert db_organization.dict()[key] == organization.dict()[key]
 
 
 @pytest.mark.asyncio
 async def test_delete(db):
-    organization_id = (await OrganizationFactory())["id"]
+    organization_id = (await OrganizationFactory()).id
 
     assert (await crud.delete(db, organization_id)) is None
 
@@ -95,14 +95,16 @@ async def test_delete(db):
     ],
 )
 async def test_update(db, input, updateData, expected):
-    organization_id = (await OrganizationFactory(**input))["id"]
+    organization_id = (await OrganizationFactory(**input)).id
 
     organization = await crud.update(
-        db=db, organization_id=organization_id, organization=OrganizationUpdateIn(**updateData)
+        db=db,
+        organization_id=organization_id,
+        organization=OrganizationUpdateIn(**updateData),
     )
 
     for key in expected:
-        assert organization[key] == expected[key]
+        assert organization.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -113,14 +115,14 @@ async def test_get_unknown(db):
 
 
 @pytest.mark.asyncio
-async def test_exists(db):
+async def test_exist_name(db):
     organization = await OrganizationFactory()
 
-    assert await crud.exists(db=db, name=organization["name"])
+    assert await crud.exist_name(db=db, name=organization.name)
 
 
 @pytest.mark.asyncio
-async def test_check(db):
+async def test_exist(db):
     organization = await OrganizationFactory()
 
-    assert await crud.check(db=db, organization_id=organization["id"])
+    assert await crud.exist(db=db, organization_id=organization.id)

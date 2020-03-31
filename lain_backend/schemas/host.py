@@ -6,7 +6,6 @@ class HostBase(BaseModel):
     addr: IPvAnyAddress
     os: Optional[str] = Field(None, min_length=2, max_length=32)
     description: Optional[str] = Field(None, max_length=512)
-    network_id: int
 
 
 class HostCreate(HostBase):

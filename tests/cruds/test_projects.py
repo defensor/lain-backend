@@ -19,7 +19,7 @@ from lain_backend.schemas import ProjectUpdateIn
 async def test_factory(db, input, expected):
     project = await ProjectFactory(**input)
     for key in expected:
-        assert project[key] == expected[key]
+        assert project.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -43,7 +43,7 @@ async def test_get_all(db):
 
     for i in range(2):
         for key in dict(db_projects[i]):
-            assert db_projects[i][key] == projects[i][key]
+            assert db_projects[i].dict()[key] == projects[i].dict()[key]
 
 
 @pytest.mark.asyncio
@@ -64,15 +64,15 @@ async def test_unique_create(db):
 async def test_get_one(db):
     project = await ProjectFactory()
 
-    db_project = await crud.get(db, project["id"])
+    db_project = await crud.get(db, project.id)
 
     for key in dict(project):
-        assert db_project[key] == project[key]
+        assert db_project.dict()[key] == project.dict()[key]
 
 
 @pytest.mark.asyncio
 async def test_delete(db):
-    project_id = (await ProjectFactory())["id"]
+    project_id = (await ProjectFactory()).id
 
     assert (await crud.delete(db, project_id)) is None
 
@@ -89,12 +89,14 @@ async def test_delete(db):
     ],
 )
 async def test_update(db, input, updateData, expected):
-    project_id = (await ProjectFactory(**input))["id"]
+    project_id = (await ProjectFactory(**input)).id
 
-    project = await crud.update(db=db, project_id=project_id, project=ProjectUpdateIn(**updateData))
+    project = await crud.update(
+        db=db, project_id=project_id, project=ProjectUpdateIn(**updateData)
+    )
 
     for key in expected:
-        assert project[key] == expected[key]
+        assert project.dict()[key] == expected[key]
 
 
 @pytest.mark.asyncio
@@ -105,14 +107,14 @@ async def test_get_unknown(db):
 
 
 @pytest.mark.asyncio
-async def test_exists(db):
+async def test_exist_name(db):
     project = await ProjectFactory()
 
-    assert await crud.exists(db=db, name=project["name"])
+    assert await crud.exist_name(db=db, name=project.name)
 
 
 @pytest.mark.asyncio
-async def test_check(db):
+async def test_exist(db):
     project = await ProjectFactory()
 
-    assert await crud.check(db=db, project_id=project["id"])
+    assert await crud.exist(db=db, project_id=project.id)
