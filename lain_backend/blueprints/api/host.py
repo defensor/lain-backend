@@ -24,9 +24,9 @@ async def host_create(host: HostIn):
     return await crud.create(db=db, host=HostCreate(**host.dict()))
 
 
-@router.put("/", response_model=List[Host])
-async def host_get_all(skip: int = 0, limit: int = 100):
-    return await crud.get_all(db=db, skip=skip, limit=limit)
+@router.get("/", response_model=List[Host])
+async def host_list(skip: int = 0, limit: int = 100):
+    return await crud.list(db=db, skip=skip, limit=limit)
 
 
 @router.get("/{host_id}/", response_model=Host)
@@ -58,7 +58,7 @@ async def host_get_services(host_id: int):
     if not (await crud.exist(db=db, host_id=host_id)):
         raise HTTPException(status_code=404, detail="Host not found")
 
-    return await service.get_all(db=db, host_id=host_id)
+    return await service.list(db=db, host_id=host_id)
 
 
 @router.get("/{host_id}/domains", response_model=List[Domain])
@@ -66,7 +66,7 @@ async def host_get_domains(host_id: int):
     if not (await crud.exist(db=db, host_id=host_id)):
         raise HTTPException(status_code=404, detail="Host not found")
 
-    return await domain.get_all(db=db, host_id=host_id)
+    return await domain.list(db=db, host_id=host_id)
 
 
 @router.post("/{host_id}/domains/{domain_id}")

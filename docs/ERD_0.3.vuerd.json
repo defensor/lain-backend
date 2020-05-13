@@ -1,0 +1,487 @@
+{
+  "canvas": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": 156,
+    "scrollLeft": 248,
+    "show": {
+      "tableComment": true,
+      "columnComment": true,
+      "columnDataType": true,
+      "columnDefault": true,
+      "columnAutoIncrement": true,
+      "columnPrimaryKey": true,
+      "columnUnique": true,
+      "columnNotNull": true,
+      "relationship": true
+    },
+    "database": "PostgreSQL",
+    "databaseName": "",
+    "canvasType": "ERD",
+    "language": "GraphQL",
+    "tableCase": "pascalCase",
+    "columnCase": "camelCase"
+  },
+  "table": {
+    "tables": [
+      {
+        "name": "projects",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "fdb6b674-67f5-c0e8-4117-6fed103b6abc"
+          },
+          {
+            "name": "name",
+            "comment": "UNIQUE",
+            "dataType": "varchar(128)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 76,
+              "widthDefault": 60
+            },
+            "id": "2dd54f23-3a48-8406-9a05-cec64a556c3a"
+          },
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "fbd1a970-f67c-10b1-f638-f14d234b5e49"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 547,
+          "top": 442,
+          "zIndex": 225,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "id": "56835a8a-ab68-f57f-b8b8-da08ddee9858"
+      },
+      {
+        "name": "organizations",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "109ddf50-fe29-5d9e-0a26-4310081482b0"
+          },
+          {
+            "name": "name",
+            "comment": "UNIQUE",
+            "dataType": "varchar(64)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 68,
+              "widthDefault": 60
+            },
+            "id": "d7af61f6-82d4-cf16-9c7e-007cb3345d2b"
+          },
+          {
+            "name": "description",
+            "comment": "",
+            "dataType": "varchar(512)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65,
+              "widthComment": 60,
+              "widthDataType": 76,
+              "widthDefault": 60
+            },
+            "id": "2918fe49-9e87-f25a-8668-771ca97e4eaf"
+          },
+          {
+            "name": "project_id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "190f2999-c90b-2226-50b0-3427d9dc9ed3"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 545,
+          "top": 677,
+          "zIndex": 241,
+          "widthName": 79,
+          "widthComment": 60
+        },
+        "id": "0c28afcb-4dc6-bd18-fc9f-a0cbdf3fd12e"
+      },
+      {
+        "name": "networks",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "932d434a-4da7-9830-32b5-10995cba51e2"
+          },
+          {
+            "name": "addr",
+            "comment": "",
+            "dataType": "cidr",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "9c7863a5-1025-4b09-37f4-8f8c281d7d07"
+          },
+          {
+            "name": "name",
+            "comment": "",
+            "dataType": "varchar(32)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 68,
+              "widthDefault": 60
+            },
+            "id": "24b423a4-5526-5c29-15bb-5a5089be4e0c"
+          },
+          {
+            "name": "description",
+            "comment": "",
+            "dataType": "varchar(512)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65,
+              "widthComment": 60,
+              "widthDataType": 76,
+              "widthDefault": 60
+            },
+            "id": "643d3e2f-271c-54ef-741d-781206d54982"
+          },
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "96372cd0-c8ae-0e60-fcce-f6eed3ea383f"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1027,
+          "top": 951,
+          "zIndex": 279,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "id": "d2da51dc-b7b2-ca60-c405-b67f8a9fd4a3"
+      },
+      {
+        "name": "organizations_networks",
+        "comment": "",
+        "columns": [
+          {
+            "name": "organization_id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 90,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "d4ee7ea1-ce18-9e29-7d78-0c405f1e8427"
+          },
+          {
+            "name": "network_id",
+            "comment": "",
+            "dataType": "serial",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 65,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "21b3626c-f544-f835-b728-53909093e281"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1022,
+          "top": 699,
+          "zIndex": 278,
+          "widthName": 139,
+          "widthComment": 60
+        },
+        "id": "c7a4b484-9b12-bf16-f385-5414e2304fec"
+      }
+    ]
+  },
+  "memo": {
+    "memos": []
+  },
+  "relationship": {
+    "relationships": [
+      {
+        "identification": false,
+        "start": {
+          "tableId": "56835a8a-ab68-f57f-b8b8-da08ddee9858",
+          "columnIds": [
+            "fdb6b674-67f5-c0e8-4117-6fed103b6abc"
+          ],
+          "x": 728,
+          "y": 570.5,
+          "direction": "bottom"
+        },
+        "end": {
+          "tableId": "0c28afcb-4dc6-bd18-fc9f-a0cbdf3fd12e",
+          "columnIds": [
+            "190f2999-c90b-2226-50b0-3427d9dc9ed3"
+          ],
+          "x": 728.5,
+          "y": 677,
+          "direction": "top"
+        },
+        "id": "9d4435c5-dc1e-541b-ceaa-fb258b7b32c5",
+        "relationshipType": "OneN"
+      },
+      {
+        "identification": false,
+        "start": {
+          "tableId": "0c28afcb-4dc6-bd18-fc9f-a0cbdf3fd12e",
+          "columnIds": [
+            "109ddf50-fe29-5d9e-0a26-4310081482b0"
+          ],
+          "x": 912,
+          "y": 751.5,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "c7a4b484-9b12-bf16-f385-5414e2304fec",
+          "columnIds": [
+            "d4ee7ea1-ce18-9e29-7d78-0c405f1e8427"
+          ],
+          "x": 1022,
+          "y": 753,
+          "direction": "left"
+        },
+        "id": "ad0d23e7-e7c1-d3af-6e11-67978494bd6d",
+        "relationshipType": "OneN"
+      },
+      {
+        "identification": false,
+        "start": {
+          "tableId": "d2da51dc-b7b2-ca60-c405-b67f8a9fd4a3",
+          "columnIds": [
+            "932d434a-4da7-9830-32b5-10995cba51e2"
+          ],
+          "x": 1210.5,
+          "y": 951,
+          "direction": "top"
+        },
+        "end": {
+          "tableId": "c7a4b484-9b12-bf16-f385-5414e2304fec",
+          "columnIds": [
+            "21b3626c-f544-f835-b728-53909093e281"
+          ],
+          "x": 1210,
+          "y": 807,
+          "direction": "bottom"
+        },
+        "id": "0bd2b902-c0d2-fb26-e26b-cc97694f7fa2",
+        "relationshipType": "OneN"
+      }
+    ]
+  }
+}

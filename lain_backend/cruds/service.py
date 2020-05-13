@@ -1,5 +1,3 @@
-__all__ = ["create", "get", "get_all", "update", "delete", "exist"]
-
 from typing import List, Optional
 from databases import Database
 from sqlalchemy import and_
@@ -27,7 +25,7 @@ async def get(db: Database, service_id: int) -> Optional[Service]:
         return None
 
 
-async def get_all(
+async def list(
     db: Database, skip: int = 0, limit: int = 100, host_id: Optional[int] = None
 ) -> List[Service]:
     if host_id is None:

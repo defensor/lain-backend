@@ -27,9 +27,9 @@ async def domain_create(domain: DomainIn):
     return await crud.create(db=db, domain=DomainCreate(**domain.dict()))
 
 
-@router.put("/", response_model=List[Domain])
-async def domain_get_all(skip: int = 0, limit: int = 100):
-    return await crud.get_all(db=db, skip=skip, limit=limit)
+@router.get("/", response_model=List[Domain])
+async def domain_list(skip: int = 0, limit: int = 100):
+    return await crud.list(db=db, skip=skip, limit=limit)
 
 
 @router.get("/{domain_id}/", response_model=Domain)

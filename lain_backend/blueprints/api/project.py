@@ -28,9 +28,9 @@ async def project_create(project: ProjectIn):
     return await crud.create(db=db, project=ProjectCreate(**project.dict()))
 
 
-@router.put("/", response_model=List[Project])
-async def project_get_all(skip: int = 0, limit: int = 100):
-    return await crud.get_all(db=db, skip=skip, limit=limit)
+@router.get("/", response_model=List[Project])
+async def project_list(skip: int = 0, limit: int = 100):
+    return await crud.list(db=db, skip=skip, limit=limit)
 
 
 @router.get("/{project_id}/", response_model=Project)
@@ -66,8 +66,8 @@ async def project_update(project_id: int, project: ProjectUpdateIn):
 
 
 @router.get("/{project_id}/organizations", response_model=List[Organization])
-async def project_get_organizations(project_id):
+async def project_list_organizations(project_id):
     if not (await crud.exist(db=db, project_id=project_id)):
         raise HTTPException(status_code=404, detail="Project not found")
 
-    return await organization.get_all(db=db, project_id=project_id)
+    return await organization.list(db=db, project_id=project_id)

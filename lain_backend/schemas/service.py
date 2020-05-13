@@ -4,7 +4,8 @@ from typing import Optional
 
 class ServiceBase(BaseModel):
     port: int = Field(..., ge=0, le=65535)
-    name: str = Field(..., min_length=3, max_length=64)
+    proto3: str = Field(..., min_length=1, max_length=8)
+    proto7: Optional[str] = Field(None, min_length=1, max_length=32)
     version: Optional[str] = Field(None, max_length=64)
     description: Optional[str] = Field(None, max_length=512)
     host_id: int
@@ -20,7 +21,8 @@ class ServiceIn(ServiceBase):
 
 class ServiceUpdate(BaseModel):
     port: Optional[int] = Field(None, ge=0, le=65535)
-    name: Optional[str] = Field(None, min_length=3, max_length=64)
+    proto3: str = Field(None, min_length=1, max_length=8)
+    proto7: str = Field(None, min_length=1, max_length=32)
     version: Optional[str] = Field(None, max_length=64)
     description: Optional[str] = Field(None, max_length=512)
 

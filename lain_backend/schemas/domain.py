@@ -2,10 +2,11 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 
 
+
 class DomainBase(BaseModel):
     name: str = Field(..., min_length=3, max_length=64)
+    record: str = Field("A", min_length=1, max_length=32)
     description: Optional[str] = None
-    type_id: Optional[int] = None
 
 
 class DomainCreate(DomainBase):
@@ -18,8 +19,8 @@ class DomainIn(DomainBase):
 
 class DomainUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=3, max_length=64)
+    record: Optional[str] = Field(None, min_length=1, max_length=32)
     description: Optional[str] = None
-    type_id: Optional[int] = None
 
 
 class DomainUpdateIn(DomainUpdate):

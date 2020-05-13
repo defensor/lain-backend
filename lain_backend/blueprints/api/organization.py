@@ -14,6 +14,7 @@ from lain_backend.schemas import (
     Host,
 )
 from lain_backend.database import database as db
+from lain_backend.tasks.parser import importer
 
 router = APIRouter()
 
@@ -30,9 +31,9 @@ async def organization_create(organization: OrganizationIn):
     )
 
 
-@router.put("/", response_model=List[Organization])
-async def organization_get_all(skip: int = 0, limit: int = 100):
-    return await crud.get_all(db=db, skip=skip, limit=limit)
+@router.get("/", response_model=List[Organization])
+async def organization_list(skip: int = 0, limit: int = 100):
+    return await crud.list(db=db, skip=skip, limit=limit)
 
 
 @router.get("/{organization_id}/", response_model=Organization)
@@ -70,11 +71,11 @@ async def organization_update(organization_id: int, organization: OrganizationUp
 
 
 @router.get("/{organization_id}/hosts", response_model=List[Host])
-async def organization_get_hosts(organization_id):
+async def organization_list_hosts(organization_id):
     if not (await crud.exist(db=db, organization_id=organization_id)):
         raise HTTPException(status_code=404, detail="Organization not found")
 
-    return await host.get_all(db=db, organization_id=organization_id)
+    return await host.list(db=db, organization_id=organization_id)
 
 
 @router.post("/{organization_id}/hosts/{host_id}")
@@ -113,3 +114,8 @@ async def organization_remove_host(organization_id: int, host_id: int):
     await organizations_hosts.delete(
         db=db, organization_id=organization_id, host_id=host_id
     )
+
+
+@router.post("/{organization_id}/import")
+async def import_from_nmap():
+    await importer.import_data(db=db, filename="./scanResult.xml")

@@ -1,5 +1,3 @@
-__all__ = ["create", "get", "get_all", "update", "delete", "exist", "exist_name"]
-
 from typing import List, Optional
 from databases import Database
 
@@ -26,7 +24,7 @@ async def get(db: Database, project_id: int) -> Optional[Project]:
         return None
 
 
-async def get_all(db: Database, skip: int = 0, limit: int = 100,) -> List[Project]:
+async def list(db: Database, skip: int = 0, limit: int = 100) -> List[Project]:
     projects = await db.fetch_all(model.select().offset(skip).limit(limit))
 
     return [Project(**project) for project in projects]

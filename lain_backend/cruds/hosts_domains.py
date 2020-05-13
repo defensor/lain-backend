@@ -1,5 +1,3 @@
-__all__ = ["create", "delete", "get_all", "exist"]
-
 from typing import List, Optional
 from databases import Database
 from sqlalchemy import and_
@@ -20,7 +18,7 @@ async def delete(db: Database, host_id: int, domain_id: int) -> None:
     )
 
 
-async def get_all(
+async def list(
     db: Database, domain_id: Optional[int] = None, host_id: Optional[int] = None
 ) -> List[HostDomain]:
     if domain_id is not None:
@@ -35,7 +33,6 @@ async def get_all(
         hosts_domains = await db.fetch_all(model.select().where())
 
     return [HostDomain(**host_domain) for host_domain in hosts_domains]
-
 
 
 async def exist(db: Database, domain_id: int, host_id: int) -> bool:

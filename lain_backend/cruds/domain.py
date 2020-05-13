@@ -1,5 +1,3 @@
-__all__ = ["create", "get", "get_all", "update", "delete", "exist", "exist_name"]
-
 from typing import List, Optional
 from databases import Database
 
@@ -27,7 +25,7 @@ async def get(db: Database, domain_id: int) -> Optional[Domain]:
         return None
 
 
-async def get_all(
+async def list(
     db: Database, skip: int = 0, limit: int = 100, host_id: Optional[int] = None
 ) -> List[Domain]:
     if host_id is None:
@@ -35,7 +33,7 @@ async def get_all(
     else:
         ids = [
             host_domain.domain_id
-            for host_domain in await hosts_domains.get_all(db=db, host_id=host_id)
+            for host_domain in await hosts_domains.list(db=db, host_id=host_id)
         ]
         domains = await db.fetch_all(
             model.select().where(model.c.id.in_(ids)).offset(skip).limit(limit)

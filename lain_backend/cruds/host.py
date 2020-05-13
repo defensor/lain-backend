@@ -1,5 +1,3 @@
-__all__ = ["create", "get", "get_all", "update", "delete", "exist", "exist_name"]
-
 from typing import List, Optional
 from databases import Database
 
@@ -26,7 +24,7 @@ async def get(db: Database, host_id: int) -> Optional[Host]:
         return None
 
 
-async def get_all(
+async def list(
     db: Database, skip: int = 0, limit: int = 100, organization_id: Optional[int] = None
 ) -> List[Host]:
     if organization_id is None:

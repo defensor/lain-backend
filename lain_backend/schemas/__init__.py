@@ -5,13 +5,6 @@ from .domain import (
     DomainUpdate,
     DomainUpdateIn,
 )
-from .domain_type import (
-    DomainType,
-    DomainTypeCreate,
-    DomainTypeIn,
-    DomainTypeUpdate,
-    DomainTypeUpdateIn,
-)
 from .host import (
     Host,
     HostCreate,
@@ -33,13 +26,6 @@ from .project import (
     ProjectUpdate,
     ProjectUpdateIn,
 )
-from .protocol import (
-    Protocol,
-    ProtocolCreate,
-    ProtocolIn,
-    ProtocolUpdate,
-    ProtocolUpdateIn,
-)
 from .service import (
     Service,
     ServiceCreate,
@@ -49,4 +35,3 @@ from .service import (
 )
 from .hosts_domains import HostDomain
 from .organizations_hosts import OrganizationHost
-from .services_protocols import ServiceProtocol
