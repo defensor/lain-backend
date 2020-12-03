@@ -13,7 +13,7 @@ CREATE TABLE organizations (
 CREATE TABLE hosts (
     id serial PRIMARY KEY,
     addr inet NOT NULL,
-    os varchar(32),
+    os text,
     description varchar(512)
 );
 
@@ -27,6 +27,7 @@ CREATE TABLE domains (
 CREATE TABLE services (
     id serial PRIMARY KEY,
     port integer NOT NULL,
+    state varchar(16) NOT NULL,
     proto3 varchar(8) NOT NULL,
     proto7 varchar(32),
     version varchar(64),

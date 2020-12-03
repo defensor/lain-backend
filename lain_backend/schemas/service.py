@@ -1,18 +1,23 @@
-from pydantic import BaseModel, Field
 from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class ServiceBase(BaseModel):
     port: int = Field(..., ge=0, le=65535)
+    state: str = Field(..., min_length=1, max_length=16)
     proto3: str = Field(..., min_length=1, max_length=8)
-    proto7: Optional[str] = Field(None, min_length=1, max_length=32)
+    proto7: Optional[str] = Field(None, max_length=32)
     version: Optional[str] = Field(None, max_length=64)
     description: Optional[str] = Field(None, max_length=512)
-    host_id: int
+
+
+class ServiceOut(ServiceBase):
+    pass
 
 
 class ServiceCreate(ServiceBase):
-    pass
+    host_id: Optional[int] = None
 
 
 class ServiceIn(ServiceBase):
@@ -33,3 +38,4 @@ class ServiceUpdateIn(ServiceUpdate):
 
 class Service(ServiceBase):
     id: int
+    host_id: int

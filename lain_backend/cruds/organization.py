@@ -1,8 +1,8 @@
 from typing import List, Optional
-from databases import Database
 
+from databases import Database
 from lain_backend.models import Organization as model
-from lain_backend.schemas import (
+from lain_backend.schemas.organization import (
     Organization,
     OrganizationCreate,
     OrganizationUpdate,

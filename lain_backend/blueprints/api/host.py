@@ -1,20 +1,13 @@
-from fastapi import APIRouter
+from typing import List
 
-from typing import List, Optional
-
-from fastapi import HTTPException
-
-from lain_backend.cruds import host as crud, domain, service, hosts_domains
-from lain_backend.schemas import (
-    Host,
-    HostCreate,
-    HostIn,
-    HostUpdate,
-    HostUpdateIn,
-    Service,
-    Domain,
-)
+from fastapi import APIRouter, HTTPException
+from lain_backend.cruds import domain
+from lain_backend.cruds import host as crud
+from lain_backend.cruds import hosts_domains, service
 from lain_backend.database import database as db
+from lain_backend.schemas.domain import Domain
+from lain_backend.schemas.host import Host, HostCreate, HostIn, HostUpdate, HostUpdateIn
+from lain_backend.schemas.service import Service
 
 router = APIRouter()
 

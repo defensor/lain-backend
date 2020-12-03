@@ -1,13 +1,8 @@
 from typing import List, Optional
-from databases import Database
-from sqlalchemy import and_
 
+from databases import Database
 from lain_backend.models import Service as model
-from lain_backend.schemas import (
-    Service,
-    ServiceCreate,
-    ServiceUpdate,
-)
+from lain_backend.schemas.service import Service, ServiceCreate, ServiceUpdate
 
 
 async def create(db: Database, service: ServiceCreate) -> Optional[Service]:
@@ -32,7 +27,7 @@ async def list(
         services = await db.fetch_all(model.select().offset(skip).limit(limit))
     else:
         services = await db.fetch_all(
-            model.select.where(model.c.host_id == host_id).offset(skip).limit(limit)
+            model.select().where(model.c.host_id == host_id).offset(skip).limit(limit)
         )
 
     return [Service(**service) for service in services]

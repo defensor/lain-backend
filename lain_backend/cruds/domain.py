@@ -1,13 +1,9 @@
 from typing import List, Optional
-from databases import Database
 
-from lain_backend.models import Domain as model
-from lain_backend.schemas import (
-    Domain,
-    DomainCreate,
-    DomainUpdate,
-)
+from databases import Database
 from lain_backend.cruds import hosts_domains
+from lain_backend.models import Domain as model
+from lain_backend.schemas.domain import Domain, DomainCreate, DomainUpdate
 
 
 async def create(db: Database, domain: DomainCreate) -> Optional[Domain]:

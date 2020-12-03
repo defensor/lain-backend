@@ -1,12 +1,8 @@
 from typing import List, Optional
-from databases import Database
 
+from databases import Database
 from lain_backend.models import Project as model
-from lain_backend.schemas import (
-    Project,
-    ProjectCreate,
-    ProjectUpdate,
-)
+from lain_backend.schemas.project import Project, ProjectCreate, ProjectUpdate
 
 
 async def create(db: Database, project: ProjectCreate) -> Optional[Project]:

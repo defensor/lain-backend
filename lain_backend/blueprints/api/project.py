@@ -1,19 +1,17 @@
-from fastapi import APIRouter
+from typing import List
 
-from typing import List, Optional
-
-from fastapi import HTTPException
-
-from lain_backend.cruds import project as crud, organization
-from lain_backend.schemas import (
+from fastapi import APIRouter, HTTPException
+from lain_backend.cruds import organization
+from lain_backend.cruds import project as crud
+from lain_backend.database import database as db
+from lain_backend.schemas.organization import Organization
+from lain_backend.schemas.project import (
     Project,
     ProjectCreate,
     ProjectIn,
     ProjectUpdate,
     ProjectUpdateIn,
-    Organization,
 )
-from lain_backend.database import database as db
 
 router = APIRouter()
 

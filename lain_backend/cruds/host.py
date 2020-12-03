@@ -1,12 +1,8 @@
 from typing import List, Optional
-from databases import Database
 
+from databases import Database
 from lain_backend.models import Host as model
-from lain_backend.schemas import (
-    Host,
-    HostCreate,
-    HostUpdate,
-)
+from lain_backend.schemas.host import Host, HostCreate, HostUpdate
 
 
 async def create(db: Database, host: HostCreate) -> Optional[Host]:

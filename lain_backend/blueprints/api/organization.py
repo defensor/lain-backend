@@ -1,20 +1,20 @@
-from fastapi import APIRouter
+from typing import List
 
-from typing import List, Optional
-
-from fastapi import HTTPException
-
-from lain_backend.cruds import organization as crud, host, organizations_hosts
-from lain_backend.schemas import (
+from fastapi import APIRouter, File, HTTPException
+from lain_backend.cruds import host
+from lain_backend.cruds import organization as crud
+from lain_backend.cruds import organizations_hosts
+from lain_backend.database import database as db
+from lain_backend.schemas.host import Host
+from lain_backend.schemas.organization import (
     Organization,
     OrganizationCreate,
     OrganizationIn,
     OrganizationUpdate,
     OrganizationUpdateIn,
-    Host,
 )
-from lain_backend.database import database as db
 from lain_backend.tasks.parser import importer
+from lain_backend.utils import reports
 
 router = APIRouter()
 
@@ -117,5 +117,10 @@ async def organization_remove_host(organization_id: int, host_id: int):
 
 
 @router.post("/{organization_id}/import")
-async def import_from_nmap():
-    await importer.import_data(db=db, filename="./scanResult.xml")
+async def import_from_nmap(file: bytes = File(...)):
+    await importer.import_data(db=db, file=file)
+
+
+@router.get("/{organization_id}/report")
+async def get_report():
+    return await reports.make_json_report(db=db)

@@ -1,9 +1,9 @@
 from typing import List, Optional
-from databases import Database
-from sqlalchemy import and_
 
+from databases import Database
 from lain_backend.models import hosts_domains as model
-from lain_backend.schemas import HostDomain
+from lain_backend.schemas.hosts_domains import HostDomain
+from sqlalchemy import and_
 
 
 async def create(db: Database, host_id: int, domain_id: int) -> None:

@@ -21,6 +21,7 @@ lxml = "^4.5.0"
 sqlalchemy-utils = "^0.36.3"
 anytree = "^2.8.0"
 python-libnmap = "^0.7.0"
+python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
